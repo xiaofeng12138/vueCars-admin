@@ -62,6 +62,34 @@ const routes = [
       }
     ],
   },
+  {
+    path: "/carsbrand",
+    name: "Carsbrand",
+    meta: {
+      title: "车辆品牌",
+      icon: "console",
+      iconClass: "icon_console"
+    },
+    component: Layout,
+    children: [
+      {
+        path: "/carsbrandIndex",
+        name: "CarsbrandIndex",
+        meta: {
+          title: "品牌列表"
+        },
+        component: () => import("../views/Carsbrand/index.vue"),
+      },
+      // {
+      //   path: "/parkingAdd",
+      //   name: "ParkingAdd",
+      //   meta: {
+      //     title: "新增停车场"
+      //   },
+      //   component: () => import("../views/Parking/parkingadd.vue"),
+      // }
+    ],
+  },
 ];
 
 const router = new VueRouter({
