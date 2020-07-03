@@ -1,0 +1,29 @@
+.energy_bar_wrap{
+    padding-left: 50px;
+    position: relative;
+    .label-text{
+        position: absolute;
+        left: 0;
+    }
+}
+
+.energy_bar{
+    height: 10px;
+    width: 100%;
+    border-radius: 50px;
+    background-color: #ccc;
+    span{
+        position: relative;
+        display: block;
+        height: 100%;
+        background-color: #409cff;
+        border-radius: 50px;
+        margin-top: 15px;
+        label{
+            position: absolute;
+            right:0;
+            bottom: 10%;
+        }
+    }
+    
+}

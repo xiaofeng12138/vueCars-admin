@@ -90,6 +90,34 @@ const routes = [
       // }
     ],
   },
+  {
+    path: "/cars",
+    name: "Cars",
+    meta: {
+      title: "车辆管理",
+      icon: "console",
+      iconClass: "icon_console"
+    },
+    component: Layout,
+    children: [
+      {
+        path: "/carsaddIndex",
+        name: "CarsaddIndex",
+        meta: {
+          title: "新增车辆"
+        },
+        component: () => import("../views/Cars/carsadd.vue"),
+      },
+      // {
+      //   path: "/parkingAdd",
+      //   name: "ParkingAdd",
+      //   meta: {
+      //     title: "新增停车场"
+      //   },
+      //   component: () => import("../views/Parking/parkingadd.vue"),
+      // }
+    ],
+  },
 ];
 
 const router = new VueRouter({
