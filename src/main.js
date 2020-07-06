@@ -10,6 +10,8 @@ import "./icon";
 import "./plugins/elementui";
 // 导入Composition API模块
 import "./plugins/compositionApi";
+//引入地图组件
+import "./plugins/amap"
 Vue.config.productionTip = false;
 
 new Vue({

@@ -4,11 +4,8 @@
         <el-form-item label="停车场名称" >
             <el-input v-model="form.name"></el-input>
         </el-form-item>
-        <el-form-item label="区域">
-            <el-select v-model="form.region" placeholder="请选择活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
-            </el-select>
+        <el-form-item label="区域" >
+            <Cascader :areaValue.sync = "form.area"/>
         </el-form-item>
          <el-form-item label="区域">
             <el-radio-group v-model="form.resource">
@@ -26,13 +23,15 @@
             </el-radio-group>
         </el-form-item>
         <el-form-item label="地图">
-           <div class="allMap"></div>
+           <div class="allMap">
+               <Amap />
+           </div>
         </el-form-item>
          <el-form-item label="经纬度" >
             <el-input v-model="form.name" ></el-input>
         </el-form-item>
         <el-form-item>
-            <el-button type="primary">立即创建</el-button>
+            <el-button type="primary" @click="go">立即创建</el-button>
             <el-button>取消</el-button>
         </el-form-item>
         </el-form>
@@ -40,10 +39,15 @@
 </template>
 
 <script>
+import Amap from '@/views/Amap/index.vue'
+import Cascader from '@c/cascader/index.vue'
+
 export default {
+    components:{Amap,Cascader},
     data() {
       return {
         form: {
+          area:'',
           name: '',
           region: '',
           date1: '',
@@ -55,13 +59,18 @@ export default {
         }
       }
     },
+    methods:{
+        go(){
+            console.log(this.form.area)
+        }
+    }
 }
 </script>
 <style lang="scss" scoped>
+
 .allMap{
     width: 100%;
-    height: 220px;
-    border: 1px solid #000;
+    height: 500px;
 }
 </style>
 
