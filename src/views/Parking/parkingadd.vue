@@ -24,11 +24,11 @@
         </el-form-item>
         <el-form-item label="地图">
            <div class="allMap">
-               <Amap />
+               <Amap  @showLonLat = 'getLonLatValue'/>
            </div>
         </el-form-item>
          <el-form-item label="经纬度" >
-            <el-input v-model="form.name" ></el-input>
+            <el-input v-model="form.lonlan" ></el-input>
         </el-form-item>
         <el-form-item>
             <el-button type="primary" @click="go">立即创建</el-button>
@@ -48,7 +48,7 @@ export default {
       return {
         form: {
           area:'',
-          name: '',
+          lonlan: '',
           region: '',
           date1: '',
           date2: '',
@@ -62,6 +62,12 @@ export default {
     methods:{
         go(){
             console.log(this.form.area)
+        },
+        //获取经纬度函数
+        getLonLatValue(data){
+            // console.log(data)
+            this.form.lonlan = data.value
+            console.log(this.form.lonlan)
         }
     }
 }

@@ -20,50 +20,67 @@ export default {
                 lazyLoad (node, resolve) {
                     const { level } = node;
                     let requestData={}
-                    if(level === 0){
-                        requestData.type = 'province'
+                    const jsonType ={
+                          0:{type:'province'},
+                          1:{type:'city',code:'province'},
+                          2:{type:'area',code:'city'},
+                          3:{type:'street',code:'area'},
                     }
-                    if(level === 1){
-                        requestData.type = 'city'
-                        requestData.province_code = node.value
-                    }
-                    if(level === 2){
-                        requestData.type = 'area'
-                        requestData.city_code = node.value
-                    }
-                    if(level === 3){
-                        requestData.type = 'street'
-                        requestData.area_code = node.value
-                    }
+                    if(jsonType[level].code){ requestData[`${jsonType[level].code}_code`] = node.value}
+                    requestData.type = jsonType[level].type
+
+                    // if(level === 0){
+                    //     requestData.type = 'province'
+                    // }
+                    // if(level === 1){
+                    //     requestData.type = 'city'
+                    //     requestData.province_code = node.value
+                    // }
+                    // if(level === 2){
+                    //     requestData.type = 'area'
+                    //     requestData.city_code = node.value
+                    // }
+                    // if(level === 3){
+                    //     requestData.type = 'street'
+                    //     requestData.area_code = node.value
+                    // }
 
 
                     GetCity(requestData).then(res=>{
                         let data = res.data.data
-                        if(level === 0){
-                            data.forEach((item)=>{
-                                item.label = item.PROVINCE_NAME
-                                item.value = item.PROVINCE_CODE
-                            })
-                        }
-                        if(level === 1){
-                            data.forEach((item)=>{
-                                item.label = item.CITY_NAME
-                                item.value = item.CITY_CODE
-                            })
-                        }
-                        if(level === 2){
-                            data.forEach((item)=>{
-                                item.label = item.AREA_NAME
-                                item.value = item.AREA_CODE
-                            })
-                        }
-                        if(level === 3){
-                            data.forEach((item)=>{
-                                item.label = item.STREET_NAME
-                                item.value = item.STREET_CODE
-                                item.leaf = level >= 3
-                            })
-                        }
+                        let upValue = (jsonType[level].type).toUpperCase ()
+                        // console.log((jsonType[level].type).toUpperCase ())
+                        data.forEach((item)=>{
+                                item.label = item[`${upValue}_NAME`]
+                                item.value = item[`${upValue}_CODE`]
+                                if(level === 3){ item.leaf = level >= 3 }
+                        })
+                       
+                    //    if(level === 0){
+                    //         data.forEach((item)=>{
+                    //             item.label = item.PROVINCE_NAME
+                    //             item.value = item.PROVINCE_CODE
+                    //         })
+                    //     }
+                    //     if(level === 1){
+                    //         data.forEach((item)=>{
+                    //             item.label = item.CITY_NAME
+                    //             item.value = item.CITY_CODE
+                    //         })
+                    //     }
+                    //     if(level === 2){
+                    //         data.forEach((item)=>{
+                    //             item.label = item.AREA_NAME
+                    //             item.value = item.AREA_CODE
+                    //         })
+                    //     }
+                    //     if(level === 3){
+                    //         data.forEach((item)=>{
+                    //             item.label = item.STREET_NAME
+                    //             item.value = item.STREET_CODE
+                    //             item.leaf = level >= 3
+                    //         })
+                    //     }
                         resolve(res.data.data)
                     
                     })
