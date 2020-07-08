@@ -7,6 +7,7 @@
 <script>
 import {amapManager,lazyAMapApiLoaderInstance} from 'vue-amap'
 import {getLonLat} from '../../utils/map/getLonLat.js'
+import {getCode} from '../../utils/map/location.js'
 export default {
     data() {
         return {
@@ -20,7 +21,7 @@ export default {
            this.map = new AMap.Map("amapDemo",{
                resizeEnable: true, //是否监控地图容器尺寸变化
                zoom:17, //初始化地图层级
-            //    center: [116.397428, 39.90923] //初始化地图中心点
+               center: [116.397428, 39.90923] //初始化地图中心点
            })
            this.map.on("click",function(e){
                let lonlat = getLonLat(e)
@@ -29,6 +30,11 @@ export default {
            })
         })
 
+    },
+    methods:{
+        setNewMapCenter(data){
+            getCode(data,this.map)
+        }
     }
 }
 </script>

@@ -4,8 +4,8 @@
         <el-form-item label="停车场名称" >
             <el-input v-model="form.name"></el-input>
         </el-form-item>
-        <el-form-item label="区域" >
-            <Cascader :areaValue.sync = "form.area"/>
+        <el-form-item label="区域"  >
+            <Cascader :areaValue.sync = "form.area" @callback = "setMapCenter" :mapLocation = "true"/>
         </el-form-item>
          <el-form-item label="区域">
             <el-radio-group v-model="form.resource">
@@ -24,11 +24,11 @@
         </el-form-item>
         <el-form-item label="地图">
            <div class="allMap">
-               <Amap  @showLonLat = 'getLonLatValue'/>
+               <Amap  @showLonLat = 'getLonLatValue' ref="amap" />
            </div>
         </el-form-item>
          <el-form-item label="经纬度" >
-            <el-input v-model="form.lonlan" ></el-input>
+            <el-input v-model="form.lonlan"></el-input>
         </el-form-item>
         <el-form-item>
             <el-button type="primary" @click="go">立即创建</el-button>
@@ -60,6 +60,10 @@ export default {
       }
     },
     methods:{
+        setMapCenter(data){
+            this.$refs.amap.setNewMapCenter(data)
+            // console.log(data)
+        },
         go(){
             console.log(this.form.area)
         },
