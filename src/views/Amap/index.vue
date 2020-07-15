@@ -8,10 +8,12 @@
 import {amapManager,lazyAMapApiLoaderInstance} from 'vue-amap'
 import {getLonLat} from '../../utils/map/getLonLat.js'
 import {getCode} from '../../utils/map/location.js'
+import {amapMarker,apiClearMarker} from '../../utils/map/marker.js'
 export default {
     data() {
         return {
             map:null,
+            lonlat:{}, //声明经纬度对象
         }
     },
     mounted(){
@@ -20,13 +22,14 @@ export default {
         lazyAMapApiLoaderInstance.load().then(()=>{
            this.map = new AMap.Map("amapDemo",{
                resizeEnable: true, //是否监控地图容器尺寸变化
-               zoom:17, //初始化地图层级
-               center: [116.397428, 39.90923] //初始化地图中心点
+               zoom:16, //初始化地图层级
+            //    center: [116.397428, 39.90923] //初始化地图中心点
            })
            this.map.on("click",function(e){
-               let lonlat = getLonLat(e)
-            //    console.log(lonlat)
-               _this.$emit('showLonLat',lonlat)
+            //    console.log(e)
+                _this.lonlat = getLonLat(e)
+               _this.$emit('showLonLat', _this.lonlat)
+               _this.setMarker()
            })
         })
 
@@ -34,6 +37,12 @@ export default {
     methods:{
         setNewMapCenter(data){
             getCode(data,this.map)
+        },
+        clearMarker(){
+            apiClearMarker(this.map)
+        },
+        setMarker(){
+            amapMarker(this.lonlat,this.map)
         }
     }
 }

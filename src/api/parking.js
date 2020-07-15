@@ -9,3 +9,11 @@ export function GetCity(data){
         data
     })
 }
+
+export function addParking(data){
+    return service.request({
+        method: "post",
+        url: "/parking/add/",
+        data
+    })
+}

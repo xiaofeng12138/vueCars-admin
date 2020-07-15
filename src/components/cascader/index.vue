@@ -56,7 +56,9 @@ export default {
         }
     },
     methods:{
-       
+       clearArea(){
+           this.value = ''
+       },
         changeValue(e){
             this.$emit('update:areaValue', e.join()) //修改父组件传过来的值
             let code = e[e.length - 1]
@@ -66,8 +68,6 @@ export default {
             if(this.mapLocation){
                 this.$emit('callback',this.address.join(""))
             }
-           
-         
         },
          getaddress(node){
             let index =  node.level - 1;
