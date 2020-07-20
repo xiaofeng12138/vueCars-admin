@@ -17,3 +17,12 @@ export function addParking(data){
         data
     })
 }
+
+export function ListParking(data){
+    return service.request({
+        method: "post",
+        url: "/parking/list/",
+        data
+    })
+}
+

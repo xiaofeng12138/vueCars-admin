@@ -1,0 +1,21 @@
+import { setToken, setUsername, getUsername, removeToken, removeUsername } from "@/utils/cookies";
+
+const state = {
+    parking_type:[
+        {label:"室内",value:1},
+        {label:"室外",value:2}
+    ],
+    parking_status:[
+        {label:'禁用',value:1},
+        {label:'启用',value:2}
+    ]
+}
+  
+const getters = {}
+const mutations ={}
+const actions = {}
+
+export default {
+    namespaced: true,
+    state,
+};

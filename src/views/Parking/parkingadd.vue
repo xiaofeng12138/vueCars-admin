@@ -12,9 +12,7 @@
         </el-form-item>
          <el-form-item label="类型">
             <el-radio-group v-model="form.type">
-                <el-radio v-for="(item,index) in carsType" :label="item.label" :value="item.value" :key="index" ></el-radio>
-                <!-- <el-radio label="室内"></el-radio>
-                <el-radio label="室外"></el-radio> -->
+                <el-radio v-for="(item,index) in carsType" :label="item.value" :key="index">{{item.label}}</el-radio>
             </el-radio-group>
         </el-form-item>
          <el-form-item label="可停放车辆" prop="carsNumber" >
@@ -22,7 +20,7 @@
         </el-form-item>
         <el-form-item label="禁启用">
             <el-radio-group v-model="form.status">
-                 <el-radio v-for="(item,index) in carsStatus" :key="index" :value="item.value" :label="item.label"></el-radio>
+                 <el-radio v-for="(item,index) in carsStatus" :key="index"  :label="item.value">{{item.label}}</el-radio>
             </el-radio-group>
         </el-form-item>
         <el-form-item label="地图">
@@ -51,14 +49,8 @@ export default {
     data() {
       return {
         button_status:false,
-        carsType:[
-            {label:'室内',value:1},
-            {label:'室外',value:2}
-            ],
-        carsStatus:[
-            {label:'禁用',value:1},
-            {label:'启用',value:2}
-        ],
+        carsType:this.$store.state.config.parking_type,
+        carsStatus:this.$store.state.config.parking_status,
         form: {
           parkingName:'',
           area: '',
@@ -120,6 +112,9 @@ export default {
             // console.log(data)
             this.form.lnglat = data.value
         }
+    },
+    mounted(){
+        // console.log(this.$store.state.config.parking_type)
     }
 }
 </script>
