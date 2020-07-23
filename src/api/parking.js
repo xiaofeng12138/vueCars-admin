@@ -35,3 +35,20 @@ export function detailParking(data){
     })
 }
 
+//停车场编辑
+export function editParking(data){
+    return service.request({
+        method: "post",
+        url: "/parking/edit/",
+        data
+    })
+}
+
+//停车场删除
+export function deleteParking(data){
+    return service.request({
+        method: "post",
+        url: "/parking/delete/",
+        data
+    })
+}

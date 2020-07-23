@@ -1,6 +1,6 @@
 <template>
     <div>
-         <el-cascader v-model="value" :props="props" @change = 'changeValue'></el-cascader>
+         <el-cascader  :class="{'cascader':isNull}" :placeholder="initValue" v-model="value" :props="props" @change = 'changeValue'></el-cascader>
     </div>
 </template>
 <script>
@@ -53,9 +53,17 @@ export default {
                     }
                 }
             },
+            initValue:'请选择省市区',
+            isNull:false
         }
     },
     methods:{
+        initDefault(value){
+            if(value){
+               this.initValue = value.split(',').join(' / ')
+               this.isNull = true
+            }
+        },
        clearArea(){
            this.value = ''
        },

@@ -27,18 +27,8 @@ export default {
         let _this = this
         //lazyAMapApiLoaderInstance 为了加载高德地图的api
         lazyAMapApiLoaderInstance.load().then(()=>{
-           this.map = new AMap.Map("amapDemo",{
-               resizeEnable: true, //是否监控地图容器尺寸变化
-               zoom:15, //初始化地图层级
-            //    center: [116.397428, 39.90923] //初始化地图中心点
-           })
-           this.map.on("complete",()=>{
-               if(this.options.mapload){
-                  this.mapLoad()
-               }
-           })
+           this.mapCreate()
            this.map.on("click",function(e){
-            //    console.log(e)
                 _this.lonlat = getLonLat(e)
                _this.$emit('showLonLat', _this.lonlat)
                _this.setMarker()
@@ -54,10 +44,15 @@ export default {
                zoom:15, //初始化地图层级
             //    center: [116.397428, 39.90923] //初始化地图中心点
            })
+           this.map.on("complete",()=>{
+               this.mapLoad()
+           })
         },
         //地图加载完成的方法
         mapLoad(){
-            this.$emit('callback')
+            if(this.options.mapload){
+                  this.$emit('callback')
+            }
         },
         //销毁地图函数
         Destory(){

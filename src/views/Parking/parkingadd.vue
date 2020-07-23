@@ -42,7 +42,7 @@
 <script>
 import Amap from '@/views/Amap/index.vue'
 import Cascader from '@c/cascader/index.vue'
-import { addParking,detailParking} from '@/api/parking'
+import { addParking,detailParking,editParking} from '@/api/parking'
 
 export default {
     components:{Amap,Cascader},
@@ -111,8 +111,21 @@ export default {
                     lat:lnglatArray[1],
                 }
                this.$refs.amap.setMarker(lnglat)
+               this.$refs.area.initDefault(data.region)
 
             })
+        },
+        //修改提交函数
+        submitEdit(){
+            let requestData = JSON.parse(JSON.stringify(this.form))
+            requestData.id = this.id
+             editParking(requestData).then(res=>{
+                    if(res.resCode == 0){
+                       this.$message.success(res.message);
+                       this.button_status = false
+                       this.$router.push({name:'ParkingIndex'})
+                    }
+                })
         },
         setMapCenter(data){
             this.$refs.amap.setNewMapCenter(data)
@@ -121,16 +134,21 @@ export default {
            const _this = this
             this.$refs[formName].validate((valid) => {
             if (valid) {
-                 this.button_status = true
-                addParking(this.form).then(res=>{
-                    if(res.resCode == 0){
-                       this.$message.success(res.message);
-                       this.$refs[formName].resetFields();
-                       this.button_status = false
-                       _this.$refs.amap.clearMarker()
-                       _this.$refs.area.clearArea()
-                    }
-                })
+                this.button_status = true
+                if(this.id){
+                    this.submitEdit()
+                }else{
+                    addParking(this.form).then(res=>{
+                        if(res.resCode == 0){
+                        this.$message.success(res.message);
+                        this.$refs[formName].resetFields();
+                        this.button_status = false
+                        _this.$refs.amap.clearMarker()
+                        _this.$refs.area.clearArea()
+                         this.$router.push({name:'ParkingIndex'})
+                        }
+                    })
+                }
                
             } else {
                 console.log('error submit!!');

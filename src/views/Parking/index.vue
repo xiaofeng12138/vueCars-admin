@@ -42,7 +42,11 @@
         <el-table :data="tableData"  border style="width: 100%">
             <el-table-column type="selection" width="55" align="center"></el-table-column>
             <el-table-column prop="parkingName"  label=" 停车场名称" align="center"></el-table-column>
-            <el-table-column prop="type"  label="类型" align="center"></el-table-column>
+            <el-table-column prop="type"  label="类型" align="center">
+                <template slot-scope="scope">
+                    <span>{{getType(scope.row.type)}}</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="address"  label="区域" align="center"></el-table-column>
             <el-table-column prop="carsNumber"  label="可停放车辆" align="center"></el-table-column>
             <el-table-column prop="status"  label="禁启用" align="center">
@@ -58,7 +62,7 @@
             <el-table-column  label="操作"  align="center">
                  <template slot-scope="scope">
                     <el-button size="mini" @click="edit(scope.row.id)">编辑</el-button>
-                    <el-button  size="mini"  type="danger">删除</el-button>
+                    <el-button  size="mini"  type="danger" @click="delFn(scope.row.id)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -89,7 +93,7 @@
     </div>
 </template>
 <script>
-import { ListParking } from '@/api/parking'
+import { ListParking,deleteParking } from '@/api/parking'
 import Cascader from '@c/cascader/index.vue'
 import ShowMapModal from '@c/dialog/showMapmodal.vue'
 export default {
@@ -143,6 +147,32 @@ export default {
         }
     },
     methods:{
+        //删除函数
+        delFn(row){
+          this.$confirm('确认删除吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          deleteParking({id:row}).then((res)=>{
+            if(res.resCode == 0){
+                this.getParkingList()
+                this.$message({
+                    type: 'success',
+                    message: res.message
+                });
+            }
+         })
+        }).catch(() => { });
+        },
+
+        //类型转换函数
+        getType(value){
+            const data = this.carsType.filter((item)=> item.value == value)
+            if(data && data.length > 0){
+                return data[0].label
+            }
+        },
         //编辑
         edit(row){
             let id = (row)*1

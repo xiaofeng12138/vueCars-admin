@@ -59,3 +59,10 @@ li.el-submenu {
 .el-cascader .el-input .el-input__inner{
     width: 300px !important;
 }
+//级联菜单样式
+.cascader{
+    input::-webkit-input-placeholder {color: #606266;}
+    input::-moz-placeholder {color: #606266;}
+    input:-ms-input-placeholder {color: #606266;}
+    input:-moz-placeholder { color: #606266;}
+}
