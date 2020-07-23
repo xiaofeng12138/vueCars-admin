@@ -6,29 +6,27 @@
                      <el-form-item label="区域">
                         <Cascader  ref="area" :areaValue.sync = "form.area"/>
                     </el-form-item>
-                     <el-form-item label="类型" >
+                     <el-form-item label="类型" > 
                         <el-select v-model="form.type" placeholder="停车场" class="w-100">
-                        <el-option label="室内" value="shanghai"></el-option>
-                        <el-option label="室外" value="beijing"></el-option>
+                          <el-option  v-for="(item,index) in carsType"  :label="item.label" :value="item.value" :key="item.value"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="禁启用" >
                         <el-select v-model="form.status" placeholder="请选择" class="w-100">
-                        <el-option label="禁用" value="shanghai"></el-option>
-                        <el-option label="启用" value="beijing"></el-option>
+                          <el-option  v-for="(item,index) in carsStatus"  :label="item.label" :value="item.value" :key="item.value"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="关键字" >
-                        <el-select  v-model="form.status" placeholder="请选择"  class="w-100">
-                        <el-option label="停车场名称" value="shanghai"></el-option>
-                        <el-option label="详细地址" value="beijing"></el-option>
+                        <el-select  v-model="keyword" placeholder="请选择"  class="w-100">
+                            <el-option label="停车场名称" value="parkingName"></el-option>
+                            <el-option label="详细地址" value="address"></el-option>
                         </el-select>
                     </el-form-item>
                      <el-form-item>
-                       <el-input placeholder="请输入关键字"></el-input>
+                       <el-input placeholder="请输入关键字" v-model="search_key"></el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-button type="danger" >查询</el-button>
+                        <el-button type="danger" @click="search" >查询</el-button>
                     </el-form-item>
                 </el-form>
         </el-col>
@@ -52,16 +50,15 @@
                     <el-switch v-model="scope.row.status" active-value = "2" inactive-value="1" active-color="#13ce66"  inactive-color="#ff4949"> </el-switch>
                 </template>
             </el-table-column>
-            <el-table-column prop="lnglat"  label="查看位置" align="center"></el-table-column>
+            <el-table-column  label="查看位置" align="center">
+                <template  slot-scope="scope">
+                     <el-button size="mini" type="success" @click="openMap(scope.row)">查看地图</el-button>
+                </template>
+            </el-table-column>
             <el-table-column  label="操作"  align="center">
                  <template slot-scope="scope">
-                    <el-button
-                    size="mini"
-                  >编辑</el-button>
-                    <el-button
-                    size="mini"
-                    type="danger"
-                    >删除</el-button>
+                    <el-button size="mini" @click="edit(scope.row.id)">编辑</el-button>
+                    <el-button  size="mini"  type="danger">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -71,37 +68,50 @@
                 <el-pagination
                     class="pull-right"
                     background
-                    @size-change="handleSizeChange"
+                    layout="total,prev, pager, next"
+                    :page-size="10"
+                    :total="total">
+                </el-pagination>
+                <!-- <el-pagination
+                   
+                    background
                     @current-change="handleCurrentChange"
                     :current-page="currentPage"
                     :page-sizes="[10, 20, 50, 100]"
-                    :page-size="10"
+                    
                     layout="total, sizes, prev, pager, next, jumper"
                     :total="total">
-                </el-pagination>
+                </el-pagination> -->
             </el-col>
         </el-row>
-        
+        <!-- 地图显示弹窗 -->
+        <ShowMapModal :flagVisible.sync = "show_modal" :data= 'paramsData'/>
     </div>
 </template>
 <script>
 import { ListParking } from '@/api/parking'
 import Cascader from '@c/cascader/index.vue'
+import ShowMapModal from '@c/dialog/showMapmodal.vue'
 export default {
-    components:{Cascader},
+    components:{Cascader,ShowMapModal},
     data() {
         return {
+            paramsData:{},
+            show_modal:false,
             //页码总条数
+            carsType:this.$store.state.config.parking_type,
+            carsStatus:this.$store.state.config.parking_status,
             total:0,
             currentPage:1,
-            pageSize:10,
+            pageSize:100,
             pageNumber:1,
             form: {
-                name: '',
-                type: '',
                 area:'',
-                status:''
+                type: '',
+                status:'',
             },
+            keyword:'',
+            search_key:'',
             options:[
                 {
                     value:'111',
@@ -133,14 +143,42 @@ export default {
         }
     },
     methods:{
+        //编辑
+        edit(row){
+            let id = (row)*1
+            this.$router.push({
+                name:"ParkingAdd",
+                query:{
+                    id
+                }
+            })
+        },
+        openMap(row){
+            this.paramsData = row
+            this.show_modal = true
+        },
+        //搜索
+        search(){
+            this.getParkingList()
+        },
         getParkingList(){
             let requestData ={
                   pageSize:this.pageSize,
                   pageNumber:this.pageNumber
             }
-           ListParking(requestData).then(res=>{
+            let newForm = JSON.parse(JSON.stringify(this.form)) //深度拷贝form对象
+            
+            for(let key in newForm){
+                if(newForm[key]){
+                   requestData[key] = newForm[key]
+                }
+            }
+            if(this.keyword && this.search_key){
+                requestData[this.keyword] = this.search_key
+            }
+            ListParking(requestData).then(res=>{
+                // console.log(res)
                let data = res.data
-               console.log(data.data)
                if(res.data.data){this.tableData = data.data}
                if(res.data.total){this.total = data.total}
                 

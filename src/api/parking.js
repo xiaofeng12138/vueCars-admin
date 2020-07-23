@@ -26,3 +26,12 @@ export function ListParking(data){
     })
 }
 
+//停车场详情
+export function detailParking(data){
+    return service.request({
+        method: "post",
+        url: "/parking/detailed/",
+        data
+    })
+}
+

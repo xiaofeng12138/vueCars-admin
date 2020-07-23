@@ -25,7 +25,7 @@
         </el-form-item>
         <el-form-item label="地图">
            <div class="allMap">
-               <Amap  @showLonLat = 'getLonLatValue' ref="amap" />
+               <Amap  :options="options_map" @showLonLat ='getLonLatValue' ref="amap" @callback='mapLoad'/>
            </div>
         </el-form-item>
          <el-form-item label="经纬度" prop="lnglat">
@@ -42,12 +42,17 @@
 <script>
 import Amap from '@/views/Amap/index.vue'
 import Cascader from '@c/cascader/index.vue'
-import { addParking} from '@/api/parking'
+import { addParking,detailParking} from '@/api/parking'
 
 export default {
     components:{Amap,Cascader},
     data() {
       return {
+        //地图回调配置
+        options_map:{
+            mapload:true
+        },
+        id:this.$route.query.id,
         button_status:false,
         carsType:this.$store.state.config.parking_type,
         carsStatus:this.$store.state.config.parking_status,
@@ -82,7 +87,33 @@ export default {
       }
     },
     methods:{
-        
+        //地图加载完成
+        mapLoad(){
+           if(!this.id){ return false}
+           this.getDetail()
+        },
+        //获取详情
+        getDetail(){
+            detailParking({id:this.id}).then(res=>{
+                //数据还原
+                const data = res.data
+                console.log(data)
+                for(let key in data){
+                    if(Object.keys(this.form).includes(key)){
+                        this.form[key] = data[key]
+                    }
+                }
+
+                // 还原覆盖物
+                let lnglatArray = data.lnglat.split(',')
+                let lnglat = {
+                    lon:lnglatArray[0],
+                    lat:lnglatArray[1],
+                }
+               this.$refs.amap.setMarker(lnglat)
+
+            })
+        },
         setMapCenter(data){
             this.$refs.amap.setNewMapCenter(data)
         },
@@ -113,9 +144,6 @@ export default {
             this.form.lnglat = data.value
         }
     },
-    mounted(){
-        // console.log(this.$store.state.config.parking_type)
-    }
 }
 </script>
 <style lang="scss" scoped>

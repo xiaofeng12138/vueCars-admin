@@ -10,6 +10,12 @@ import {getLonLat} from '../../utils/map/getLonLat.js'
 import {getCode} from '../../utils/map/location.js'
 import {amapMarker,apiClearMarker} from '../../utils/map/marker.js'
 export default {
+    props:{
+        options:{
+            type:Object,
+            default:()=>{}
+        }
+    },
     data() {
         return {
             map:null,
@@ -19,11 +25,17 @@ export default {
     mounted(){
         //初始化地图
         let _this = this
+        //lazyAMapApiLoaderInstance 为了加载高德地图的api
         lazyAMapApiLoaderInstance.load().then(()=>{
            this.map = new AMap.Map("amapDemo",{
                resizeEnable: true, //是否监控地图容器尺寸变化
-               zoom:16, //初始化地图层级
+               zoom:15, //初始化地图层级
             //    center: [116.397428, 39.90923] //初始化地图中心点
+           })
+           this.map.on("complete",()=>{
+               if(this.options.mapload){
+                  this.mapLoad()
+               }
            })
            this.map.on("click",function(e){
             //    console.log(e)
@@ -35,16 +47,32 @@ export default {
 
     },
     methods:{
+        //创建地图
+        mapCreate(){
+             this.map = new AMap.Map("amapDemo",{
+               resizeEnable: true, //是否监控地图容器尺寸变化
+               zoom:15, //初始化地图层级
+            //    center: [116.397428, 39.90923] //初始化地图中心点
+           })
+        },
+        //地图加载完成的方法
+        mapLoad(){
+            this.$emit('callback')
+        },
+        //销毁地图函数
+        Destory(){
+          this.map && this.map.destroy()
+        },
         setNewMapCenter(data){
             getCode(data,this.map)
         },
         clearMarker(){
             apiClearMarker(this.map)
         },
-        setMarker(){
-            amapMarker(this.lonlat,this.map)
+        setMarker(lnglat){
+            amapMarker( lnglat || this.lonlat,this.map)
         }
-    }
+    },
 }
 </script>
 <style lang="scss" scoped>

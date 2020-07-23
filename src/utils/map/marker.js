@@ -9,6 +9,7 @@ export  function amapMarker(lonlat,map){
         position:[lonlat.lon,lonlat.lat]
     });
     map.add(marker)
+    map.setFitView()
 }
 
 export  function apiClearMarker(map){
@@ -17,3 +18,4 @@ export  function apiClearMarker(map){
          marker = null
     }
 }
+
