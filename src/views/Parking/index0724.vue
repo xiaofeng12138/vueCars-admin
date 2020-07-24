@@ -37,7 +37,7 @@
         </el-col>
         </el-row>
         
-         <tableData  :configTable="tableConfig" />
+
         <!--数据表格部分内容-->
         <el-table :data="tableData"  border style="width: 100%">
             <el-table-column type="selection" width="55" align="center"></el-table-column>
@@ -96,61 +96,15 @@
 import { ListParking,deleteParking } from '@/api/parking'
 import Cascader from '@c/cascader/index.vue'
 import ShowMapModal from '@c/dialog/showMapmodal.vue'
-import tableData from '@c/tableData/index'
 export default {
-    components:{Cascader,ShowMapModal,tableData},
+    components:{Cascader,ShowMapModal},
     data() {
         return {
-            tableConfig:{
-                thead:[
-                    {prop:'parkingName',label:'停车场名称'},
-                    {
-                        prop:'type',
-                        label:'类型',
-                        type:'function',
-                        callback:(row,prop)=>{
-                            let data =this.parking_type_json[row[prop]]
-                            if(data) return data.label
-
-
-                            // const data = this.carsType.filter((item)=> item.value == row[prop])
-                            // if(data && data.length > 0){
-                            //     return data[0].label
-                            // }
-                        }
-                    },
-                    {
-                        prop:'address',
-                        label:'区域',
-                        type:'function',
-                        callback:(row,prop)=>{
-                            let addressInfo  = ''
-                            if(row[prop]){
-                                let split = row[prop].split(',')
-                                addressInfo += split
-                                if(split[1]){
-                                    addressInfo += `<br /> ${split[1]}`
-                                }
-                            }
-                            return addressInfo
-
-                        }
-                    },
-                    {prop:'carsNumber',label:'可停放车辆'},
-                    {prop:'status',label:'禁启用'},
-                    {prop:'lnglat',label:'查看位置'},
-                    {prop:'',label:'操作'},
-                ],
-                checkbox:false,
-                url:'/parking/list/'
-            },
             paramsData:{},
             show_modal:false,
             //页码总条数
             carsType:this.$store.state.config.parking_type,
             carsStatus:this.$store.state.config.parking_status,
-            //停车场类型json
-            parking_type_json:this.$store.state.config.parking_type_json,
             total:0,
             currentPage:1,
             pageSize:100,
@@ -195,21 +149,21 @@ export default {
     methods:{
         //删除函数
         delFn(row){
-            this.$confirm('确认删除吗?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-            }).then(() => {
-            deleteParking({id:row}).then((res)=>{
-                if(res.resCode == 0){
-                    this.getParkingList()
-                    this.$message({
-                        type: 'success',
-                        message: res.message
-                    });
-                }
-            })
-            }).catch(() => { });
+          this.$confirm('确认删除吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          deleteParking({id:row}).then((res)=>{
+            if(res.resCode == 0){
+                this.getParkingList()
+                this.$message({
+                    type: 'success',
+                    message: res.message
+                });
+            }
+         })
+        }).catch(() => { });
         },
 
         //类型转换函数
