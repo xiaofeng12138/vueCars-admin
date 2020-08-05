@@ -3,17 +3,11 @@
         <el-row>
             <el-col :span="18">
                 <el-form :inline="true" :model="form" class="demo-form-inline" label-width="100px">
-                    <el-form-item label="品牌型号">
+                    <el-form-item label="车辆品牌">
                         <el-input v-model="form.name" placeholder="请输入车辆品牌型号"></el-input>
                     </el-form-item>
-                    <el-form-item label="车辆品牌">
-                        <el-select v-model="form.type" placeholder="请选择车辆品牌">
-                        <el-option label="室内" value="shanghai"></el-option>
-                        <el-option label="室外" value="beijing"></el-option>
-                        </el-select>
-                    </el-form-item>
                     <el-form-item>
-                        <el-button type="danger" >查询</el-button>
+                        <el-button type="danger" @click="search">查询</el-button>
                     </el-form-item>
                 </el-form>
         </el-col>
@@ -26,87 +20,132 @@
         
 
         <!--数据表格部分内容-->
-        <el-table :data="tableData"  border style="width: 100%">
-            <el-table-column type="selection" width="55" align="center"></el-table-column>
-            <el-table-column prop="parking_name"  label=" LOGO" align="center"></el-table-column>
-            <el-table-column prop="parking_type"  label="车辆品牌" align="center"></el-table-column>
-            <el-table-column prop="parking_area"  label="品牌型号" align="center"></el-table-column>
-            <el-table-column prop="startUsing"  label="禁启用" align="center">
-                <template slot-scope="scope">
-                    <el-switch v-model="scope.row.startUsing" active-color="#13ce66"  inactive-color="#ff4949"> </el-switch>
-                </template>
-            </el-table-column>
-           
-            <el-table-column  label="操作"  align="center">
-                 <template slot-scope="scope">
-                    <el-button
-                    size="mini"
-                  >编辑</el-button>
-                    <el-button
-                    size="mini"
-                    type="danger"
-                    >删除</el-button>
-                </template>
-            </el-table-column>
-        </el-table>
-         <AddCarsBrand :flagVisible.sync = "dialog_show" />
+         <tableData  :configTable="tableConfig" ref="loadTable">
+             <!-- 禁启用的插槽 -->
+            <template v-slot:status = 'slotData'>
+                <el-switch :disabled="status_disabled" v-model="slotData.data.status" @change="changeStatus(slotData.data)" active-color="#13ce66"  inactive-color="#ff4949"> </el-switch>
+            </template>
+             <!-- 查看地图的插槽 -->
+          
+             <!-- 操作按钮的插槽 -->
+             <template v-slot:operate = 'slotData'>
+                  <el-button size="mini" @click="edit(slotData.data.id)">编辑</el-button>
+                  <el-button  size="mini"  type="danger" @click="delFn(slotData.data.id)">删除</el-button>
+            </template>
+         </tableData>
+       
+         <AddCarsBrand :flagVisible.sync = "dialog_show" :configId = 'row_id'/>
         <!--弹出框部分内容-->
        
 
     </div>
 </template>
 <script>
+import tableData from '@c/tableData/index'
 import AddCarsBrand from '@/components/dialog/addcarsbrand.vue'
+import { BrandDelete,BrandStatus} from '@/api/brand'
 export default {
-    components:{AddCarsBrand},
+    components:{AddCarsBrand,tableData},
     data() {
     return {
+        tableConfig:{
+                thead:[
+                    {
+                        prop:'imgUrl',
+                        label:'LOGO',
+                        type:'image',
+                        slotName:'imgSrc',
+                        imgWidth:50,
+                        width:100,
+                    },
+                    {
+                        prop:'type',
+                        label:'车辆品牌',
+                        type:'function', 
+                        callback:(row,prop)=>{return row.nameCh + '--'+ row.nameEn}
+                    },
+                    
+                    {
+                        prop:'status',
+                        type:'slot',
+                        label:'禁启用',
+                        slotName:'status'
+                    },
+                    {
+                        prop:'',
+                        label:'操作',
+                        type:'slot',
+                        slotName:'operate'
+                    },
+                ],
+                checkbox:true,
+                url:'brand',
+                data:{
+                    pageSize:10,
+                    pageNumber:1
+                }
+            },
         //弹出框部分
         dialog_show:false,
         form: {
           name: '',
-          type: '',
-          area:''
         },
-        options:[
-            {
-                value:'111',
-                label:'上海市',
-                children:[
-                    {
-                      value:'22',
-                      label:'杨浦区',  
-                      children:[
-                            {
-                                 value:'33',
-                                 label:'五角场街道',  
-                            },
-                            {
-                                 value:'33',
-                                 label:'新江湾城街道',  
-                            }
-                          ]
-                    },
-                    {
-                      value:'22',
-                      label:'徐汇区',  
-                    }
-                ]
-
-            }
-        ],
-        tableData:[
-            {
-              parking_name:'上海市杨浦区政仁路81号',
-              parking_type:'室外',
-              parking_area:'上海市杨浦区',
-              parking_num:'50',
-              startUsing:1,
-              parking_location:'123455,,56978',
-            }
-            ]
+         status_disabled:false,
+         row_id:''
       }
     },
+    methods:{
+        //搜索函数
+        search(){
+             let requestData ={
+                  pageSize:10,
+                  pageNumber:1
+            }
+            if(this.form.name){
+                requestData['brand'] = this.form.name
+            }
+            this.$refs.loadTable.requestLoadData(requestData)
+        },
+        //删除函数
+        delFn(row){
+            this.$confirm('确认删除吗?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+            }).then(() => {
+            BrandDelete({id:row}).then((res)=>{
+                if(res.resCode == 0){
+                    this.$refs.loadTable.requestLoadData()
+                    this.$message({
+                        type: 'success',
+                        message: res.message
+                    });
+                }
+            })
+            }).catch(() => { });
+        },
+        //修改禁启用状态
+        changeStatus(row){
+            let requestData ={
+                id:(row.id)*1,
+                status:row.status
+            }
+            this.status_disabled = true
+            BrandStatus(requestData).then(res=>{
+                if(res.resCode == 0){
+                   this.$message.success(res.message)
+                   this.status_disabled = false
+                }
+            }).catch(err=>{
+                this.status_disabled = false
+            })
+        },
+         //编辑
+        edit(row){
+           this.row_id = row
+           this.dialog_show = true
+        },
+    }
     
 }
 </script>

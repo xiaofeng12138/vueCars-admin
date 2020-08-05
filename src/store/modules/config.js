@@ -1,5 +1,3 @@
-import { setToken, setUsername, getUsername, removeToken, removeUsername } from "@/utils/cookies";
-
 const state = {
     parking_type_json:{
         1:{label:"室内",value:1},
@@ -10,8 +8,13 @@ const state = {
         {label:"室外",value:2}
     ],
     parking_status:[
-        {label:'禁用',value:1},
-        {label:'启用',value:2}
+        {label:'禁用',value:false},
+        {label:'启用',value:true}
+    ],
+    //车辆品牌禁启用状态
+    brand_status:[
+        {label:'禁用',value:false},
+        {label:'启用',value:true}
     ]
 }
   

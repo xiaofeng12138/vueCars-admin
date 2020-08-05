@@ -54,3 +54,13 @@ export function deleteParking(data){
         data
     })
 }
+
+//车辆品牌禁启用
+export function statusParking(data){
+    return service.request({
+        method: "post",
+        url: "/parking/status/",
+        data
+    })
+}
+

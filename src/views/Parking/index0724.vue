@@ -116,33 +116,7 @@ export default {
             },
             keyword:'',
             search_key:'',
-            options:[
-                {
-                    value:'111',
-                    label:'上海市',
-                    children:[
-                        {
-                        value:'22',
-                        label:'杨浦区',  
-                        children:[
-                                {
-                                    value:'33',
-                                    label:'五角场街道',  
-                                },
-                                {
-                                    value:'33',
-                                    label:'新江湾城街道',  
-                                }
-                            ]
-                        },
-                        {
-                        value:'22',
-                        label:'徐汇区',  
-                        }
-                    ]
-
-                }
-            ],
+            options:[],
             tableData:[]
         }
     },

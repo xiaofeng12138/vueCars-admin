@@ -40,7 +40,7 @@
          <tableData  :configTable="tableConfig" ref="loadTable">
              <!-- 禁启用的插槽 -->
             <template v-slot:status = 'slotData'>
-                 <el-switch v-model="slotData.data.status" active-value = "2" inactive-value="1" active-color="#13ce66"  inactive-color="#ff4949"> </el-switch>
+                 <el-switch :disabled="status_disabled" v-model="slotData.data.status" @change="changeStatus(slotData.data)"  active-color="#13ce66"  inactive-color="#ff4949"> </el-switch>
             </template>
              <!-- 查看地图的插槽 -->
              <template v-slot:lnglat = 'slotData'>
@@ -58,7 +58,7 @@
     </div>
 </template>
 <script>
-import { ListParking,deleteParking } from '@/api/parking'
+import { ListParking,deleteParking,statusParking } from '@/api/parking'
 import Cascader from '@c/cascader/index.vue'
 import ShowMapModal from '@c/dialog/showMapmodal.vue'
 import tableData from '@c/tableData/index'
@@ -111,6 +111,7 @@ export default {
                     pageNumber:1
                 }
             },
+            status_disabled:false,
             paramsData:{},
             show_modal:false,
             //页码总条数
@@ -128,6 +129,22 @@ export default {
         }
     },
     methods:{
+        //修改车辆品牌禁启用
+        changeStatus(row){
+            let requestData ={
+                id:(row.id)*1,
+                status:row.status
+            }
+            this.status_disabled = true
+            statusParking(requestData).then(res=>{
+                if(res.resCode == 0){
+                   this.$message.success(res.message)
+                   this.status_disabled = false
+                }
+            }).catch(err=>{
+                this.status_disabled = false
+            })
+        },
         //删除函数
         delFn(row){
             this.$confirm('确认删除吗?', '提示', {
