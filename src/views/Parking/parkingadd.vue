@@ -58,7 +58,12 @@ export default {
       return {
         //表单配置
         formConfig:[
-            {type:'input' ,label:'停车场名称',placeholder:'请输入停车场名称',prop:'parkingName',width:'300px'},
+            {
+                type:'input' ,label:'停车场名称',placeholder:'请输入停车场名称',prop:'parkingName',width:'300px',
+                required:true,
+                requiredMsg:'66666',
+                // rules:[{ min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'change' }]
+            },
             {type:'solt' , soltName:'city', label:'区域', prop:'area'},
             {type:'input' ,label:'街道名称',placeholder:'请输入街道名称',prop:'address',width:'300px'},
             {type:'radio' ,label:'类型',prop:'type',option:this.$store.state.config.parking_type,},
