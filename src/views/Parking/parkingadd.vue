@@ -1,6 +1,6 @@
 <template>
     <div>
-        <FormData :formItem ="formConfig" :formBtn = "btnConfig">
+        <FormData ref="vuForm" :formItem ="formConfig" :formBtn = "btnConfig">
            <template v-slot:city = 'slotData'>
                 <Cascader  ref="area" :areaValue.sync = "form.area" @callback = "setMapCenter" :mapLocation = "true"/>
             </template>
@@ -55,25 +55,45 @@ import { addParking,detailParking,editParking} from '@/api/parking'
 export default {
     components:{Amap,Cascader,FormData},
     data() {
+        //自定义正则
+      let validatePass =(rule, value,callback)=>{
+           console.log(value)
+           if(value === ''){
+               callback (new Error('请输入停车场名称'))
+           }else{
+               callback()
+           }
+      }
+       let validateNumber =(rule, value,callback)=>{
+           console.log(value)
+           let regNum = /^[0-9]*$/
+           if(value === ''){
+               callback (new Error('请输入可停放车辆'))
+           }else if(!regNum.test(value)){
+                 callback (new Error('请输入数字'))
+           }else{
+               callback()
+           }
+      }
       return {
         //表单配置
         formConfig:[
             {
                 type:'input' ,label:'停车场名称',placeholder:'请输入停车场名称',prop:'parkingName',width:'300px',
                 required:true,
-                requiredMsg:'66666',
-                // rules:[{ min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'change' }]
+                
             },
-            {type:'solt' , soltName:'city', label:'区域', prop:'area'},
-            {type:'input' ,label:'街道名称',placeholder:'请输入街道名称',prop:'address',width:'300px'},
-            {type:'radio' ,label:'类型',prop:'type',option:this.$store.state.config.parking_type,},
-            {type:'input' ,label:'可停放车辆',placeholder:'请输入车辆数目',prop:'carsNumber',width:'300px'},
+            {type:'solt' , soltName:'city', label:'区域', prop:'area',},
+            {type:'input' ,label:'街道名称',placeholder:'请输入街道名称',prop:'address',width:'300px',required:true},
+            {type:'radio' ,label:'类型',prop:'type',option:this.$store.state.config.parking_type,required:true},
+            {type:'input' ,label:'可停放车辆',placeholder:'请输入车辆数目',prop:'carsNumber',width:'300px',required:true, validator:[{validator:validateNumber,trigger:'change'}]},
+            {type:'radio' ,label:'禁启用',prop:'type',option:this.$store.state.config.parking_status,required:true},
             {type:'solt' , soltName:'map', label:'地图'},
             {type:'input' ,label:'经纬度',placeholder:'请选择经纬度',prop:'lnglat',width:'300px',disabled:true},
         ],
         btnConfig:[
             {
-                type:'primary',label:'提交',hander:()=>this.aaa()
+                type:'primary',label:'提交',hander:()=>this.FormValidate()
             }
         ],
         //地图回调配置
@@ -118,8 +138,15 @@ export default {
       }
     },
     methods:{
-        aaa(){
-            console.log(3333)
+        FormValidate(){
+             this.$refs.vuForm.$refs.form.validate((valid) => {
+                if (valid) {
+                    alert('submit!');
+                } else {
+                    console.log('error submit!!');
+                    return false;
+                }
+            });
         },
         //地图加载完成
         mapLoad(){
