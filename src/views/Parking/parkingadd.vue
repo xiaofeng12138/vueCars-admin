@@ -56,6 +56,26 @@ import { constants } from 'zlib';
 export default {
     components:{Amap,Cascader,FormData},
     data() {
+        //自定义正则
+      let validatePass =(rule, value,callback)=>{
+           console.log(value)
+           if(value === ''){
+               callback (new Error('请输入停车场名称'))
+           }else{
+               callback()
+           }
+      }
+       let validateNumber =(rule, value,callback)=>{
+           console.log(value)
+           let regNum = /^[0-9]*$/
+           if(value === ''){
+               callback (new Error('请输入可停放车辆'))
+           }else if(!regNum.test(value)){
+                 callback (new Error('请输入数字'))
+           }else{
+               callback()
+           }
+      }
       return {
         //表单数据配置
         form_data:{
@@ -73,8 +93,7 @@ export default {
             {
                 type:'input' ,label:'停车场名称',placeholder:'请输入停车场名称',prop:'parkingName',width:'300px',
                 required:true,
-                requiredMsg:'66666',
-                // rules:[{ min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'change' }]
+                
             },
             {type:'solt' , soltName:'city', label:'区域', prop:'area'},
             {type:'input' ,label:'街道名称',placeholder:'请输入街道名称',prop:'address',width:'300px',  required:true,},

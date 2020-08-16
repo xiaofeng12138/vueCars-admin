@@ -48,28 +48,28 @@ export default {
                 this.rules(item)
            })
         },
-        rules(item){
-            if(item.required){
-                 let normalRules = [{ required: true, message:`请输入${item.label}`, trigger: 'change' }]
-                 if(item.rules && item.rules.length > 0){
-                     item.rules = normalRules.concat(item.rules)
-                     console.log(item.rules)
-                 }else{
-                      item.rules = normalRules
-                 }
-                }
+         rules(item) {
+          if (item.required) {
+            let normalRules = [{required: true, message: item.requiredMsg || `${this.msg_type[item.type]}${item.label}`, trigger: "change"}];
+            if (item.rules && item.rules.length > 0) {
+              item.rules = normalRules.concat(item.rules);
+              console.log(item.rules);
+            } else {
+              item.rules = normalRules;
             }
+          }
+        }
     },
 
-    watch:{
-        formItem:{
-            handler(newValve){
-                this.initFormData()
-            },
-            immediate:true
-        }
+  watch: {
+    formItem: {
+      handler(newValve) {
+        this.initFormData();
+      },
+      immediate: true
     }
-}
+  }
+};
 </script>
 
 <style lang="scss" scoped>
