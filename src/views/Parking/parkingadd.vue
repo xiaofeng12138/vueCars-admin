@@ -1,8 +1,8 @@
 <template>
     <div>
-        <FormData :formItem ="formConfig" :formBtn = "btnConfig">
+        <FormData ref="vueForm" :formData="form_data" :formItem ="formConfig" :formBtn = "btnConfig">
            <template v-slot:city = 'slotData'>
-                <Cascader  ref="area" :areaValue.sync = "form.area" @callback = "setMapCenter" :mapLocation = "true"/>
+                <Cascader  ref="area" :areaValue.sync = "form_data.area" @callback = "setMapCenter" :mapLocation = "true"/>
             </template>
              <template v-slot:map = 'slotData'>
                 <div class="allMap">
@@ -51,11 +51,23 @@ import Amap from '@/views/Amap/index.vue'
 import Cascader from '@c/cascader/index.vue'
 import FormData from '@c/form/index'
 import { addParking,detailParking,editParking} from '@/api/parking'
+import { constants } from 'zlib';
 
 export default {
     components:{Amap,Cascader,FormData},
     data() {
       return {
+        //表单数据配置
+        form_data:{
+            parkingName:'',
+            area:'',
+            address:'',
+            type:'',
+            carsNumber:'',
+            status:'',
+            lnglat:''
+
+        },
         //表单配置
         formConfig:[
             {
@@ -65,15 +77,16 @@ export default {
                 // rules:[{ min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'change' }]
             },
             {type:'solt' , soltName:'city', label:'区域', prop:'area'},
-            {type:'input' ,label:'街道名称',placeholder:'请输入街道名称',prop:'address',width:'300px'},
+            {type:'input' ,label:'街道名称',placeholder:'请输入街道名称',prop:'address',width:'300px',  required:true,},
             {type:'radio' ,label:'类型',prop:'type',option:this.$store.state.config.parking_type,},
             {type:'input' ,label:'可停放车辆',placeholder:'请输入车辆数目',prop:'carsNumber',width:'300px'},
+            {type:'radio' ,label:'禁启用',prop:'status',option:this.$store.state.config.parking_status,},
             {type:'solt' , soltName:'map', label:'地图'},
             {type:'input' ,label:'经纬度',placeholder:'请选择经纬度',prop:'lnglat',width:'300px',disabled:true},
         ],
         btnConfig:[
             {
-                type:'primary',label:'提交',hander:()=>this.aaa()
+                type:'primary',label:'提交',hander:()=>this.submitForm()
             }
         ],
         //地图回调配置
@@ -82,44 +95,34 @@ export default {
         },
         id:this.$route.query.id,
         button_status:false,
-        carsType:this.$store.state.config.parking_type,
-        carsStatus:this.$store.state.config.parking_status,
-        form: {
-          parkingName:'',
-          area: '',
-          address: '',
-          type: '',
-          carsNumber: '',
-          status: '',
-          lnglat:'',
-          content: '',
-        },
-         rules: {
-          parkingName: [
-            { required: true, message: '请输入停车场名称', trigger: 'change' },
-          ],
-          address: [
-              { required: true, message: '请输入街道名称', trigger: 'change' },
-          ],
-          area: [
-            { required: true, message: '请选择省市区', trigger: 'change' }
-          ],
-          lnglat: [
-            {  required: true, message: '请选择经纬度', trigger: 'change' }
-          ],
-          carsNumber: [
-            {  required: true, message: '请输入车辆数', trigger: 'change' },
-            { type: 'number', message: '请输入数字'}
-          ],
-        },
-
-
-        
       }
     },
     methods:{
-        aaa(){
-            console.log(3333)
+        //表单回调函数
+        submitForm(){
+            this.$refs.vueForm.$refs.form.validate((valid)=>{
+                if (valid) {
+                    this.button_status = true
+                    if(this.id){
+                        this.submitEdit()
+                    }else{
+                        addParking(this.form_data).then(res=>{
+                            if(res.resCode == 0){
+                            this.$message.success(res.message);
+                            this.$refs[formName].resetFields();
+                            this.button_status = false
+                            _this.$refs.amap.clearMarker()
+                            _this.$refs.area.clearArea()
+                            this.$router.push({name:'ParkingIndex'})
+                            }
+                        })
+                }
+               
+            } else {
+                console.log('error submit!!');
+                return false;
+            }
+            })
         },
         //地图加载完成
         mapLoad(){
@@ -131,10 +134,9 @@ export default {
             detailParking({id:this.id}).then(res=>{
                 //数据还原
                 const data = res.data
-                console.log(data)
                 for(let key in data){
-                    if(Object.keys(this.form).includes(key)){
-                        this.form[key] = data[key]
+                    if(Object.keys(this.form_data).includes(key)){
+                        this.form_data[key] = data[key]
                     }
                 }
 
@@ -151,7 +153,7 @@ export default {
         },
         //修改提交函数
         submitEdit(){
-            let requestData = JSON.parse(JSON.stringify(this.form))
+            let requestData = JSON.parse(JSON.stringify(this.form_data))
             requestData.id = this.id
              editParking(requestData).then(res=>{
                     if(res.resCode == 0){
@@ -164,36 +166,10 @@ export default {
         setMapCenter(data){
             this.$refs.amap.setNewMapCenter(data)
         },
-        submitForm(formName){
-           const _this = this
-            this.$refs[formName].validate((valid) => {
-            if (valid) {
-                this.button_status = true
-                if(this.id){
-                    this.submitEdit()
-                }else{
-                    addParking(this.form).then(res=>{
-                        if(res.resCode == 0){
-                        this.$message.success(res.message);
-                        this.$refs[formName].resetFields();
-                        this.button_status = false
-                        _this.$refs.amap.clearMarker()
-                        _this.$refs.area.clearArea()
-                         this.$router.push({name:'ParkingIndex'})
-                        }
-                    })
-                }
-               
-            } else {
-                console.log('error submit!!');
-                return false;
-            }
-            });
-        },
         //获取经纬度函数
         getLonLatValue(data){
             // console.log(data)
-            this.form.lnglat = data.value
+            this.form_data.lnglat = data.value
         }
     },
 }

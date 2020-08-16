@@ -1,10 +1,10 @@
 <template>
     <div>
-     <el-form ref="form"  :model="form" label-width="120px">
+     <el-form ref="form"  :model="formData" label-width="120px">
         <el-form-item v-for="(item,index) in formItem" :key="index" :label="item.label" :prop="item.prop" :rules="item.rules">
-            <el-input  v-if="item.type == 'input'" v-model="form[item.prop]" :placeholder="item.placeholder" :style="{'width':item.width}" :disabled="item.disabled"></el-input>
+            <el-input  v-if="item.type == 'input'" v-model="formData[item.prop]" :placeholder="item.placeholder" :style="{'width':item.width}" :disabled="item.disabled"></el-input>
             <slot v-if="item.type == 'solt'" :name="item.soltName"></slot>
-            <el-radio-group  v-if="item.type == 'radio'" >
+            <el-radio-group  v-if="item.type == 'radio'"  v-model="formData[item.prop]">
                 <el-radio v-for="(item,index) in item.option" :label="item.value" :key="index">{{item.label}}</el-radio>
             </el-radio-group>
         </el-form-item>
@@ -12,8 +12,6 @@
             <el-button v-for="(item,index) in formBtn" :key="item.index" :type="item.type" @click="item.hander && item.hander()" >{{item.label}}</el-button>
         </el-form-item>
      </el-form>
-     <el-button @click="fn">333</el-button>
-
     </div>
 </template>
 <script>
@@ -26,11 +24,14 @@ export default {
        formBtn:{
            type:Array,
            default:()=>{}
+       },
+       formData:{
+           type:Object,
+           default:()=>{}
        }
     },
     data(){
         return{
-            form:{},
             msg_type:{
                 'input':'请输入',
                 'Radio':'请选择'
@@ -42,12 +43,10 @@ export default {
             console.log(this.form)
         },
         initFormData(){
-           let newForm = {}
            this.formItem.forEach((item)=>{
-                if(item.prop){newForm[item.prop] = item.value || null}
+                if(item.prop){this.formData[item.prop] = item.value || null}
                 this.rules(item)
            })
-           this.form = newForm
         },
         rules(item){
             if(item.required){
@@ -74,6 +73,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 </style>
 
