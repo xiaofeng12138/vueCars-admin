@@ -23,7 +23,8 @@
          <tableData  :configTable="tableConfig" ref="loadTable">
              <!-- 禁启用的插槽 -->
             <template v-slot:status = 'slotData'>
-                <el-switch :disabled="status_disabled" v-model="slotData.data.status" @change="changeStatus(slotData.data)" active-color="#13ce66"  inactive-color="#ff4949"> </el-switch>
+                {{slotData.data.status}}
+                <el-switch :disabled="status_disabled" v-model="slotData.data.status"  @change="changeStatus(slotData.data)" active-color="#13ce66"  inactive-color="#ff4949"> </el-switch>
             </template>
              <!-- 查看地图的插槽 -->
           
@@ -34,7 +35,7 @@
             </template>
          </tableData>
        
-         <AddCarsBrand :flagVisible.sync = "dialog_show" :configId = 'row_id'/>
+         <AddCarsBrand :flagVisible.sync = "dialog_show" :configId = 'row_id' @tt = 'fn' />
         <!--弹出框部分内容-->
        
 
@@ -95,6 +96,9 @@ export default {
       }
     },
     methods:{
+        fn(){
+           this.search()
+        },
         //搜索函数
         search(){
              let requestData ={
@@ -142,6 +146,7 @@ export default {
         },
          //编辑
         edit(row){
+            console.log(row)
            this.row_id = row
            this.dialog_show = true
         },

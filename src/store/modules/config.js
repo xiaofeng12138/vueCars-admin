@@ -18,7 +18,23 @@ const state = {
     brand_status:[
         {label:'禁用',value:false},
         {label:'启用',value:true}
-    ]
+    ],
+    // 年检状态
+    yearCheck_status:[
+        {label:'已年检',value:true},
+        {label:'未年检',value:false}
+    ],
+    //档位
+    gear_status:[
+        {label:'手动',value:1},
+        {label:'自动',value:2},
+        {label:'人工智能',value:3},
+    ],
+    energyType:[
+        {label:'电',value:1},
+        {label:'油',value:2},
+        {label:'混合动力',value:3},
+    ],
 }
   
 const getters = {}

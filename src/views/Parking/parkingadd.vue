@@ -65,7 +65,7 @@ export default {
                callback()
            }
       }
-       let validateNumber =(rule, value,callback)=>{
+      let validateNumber =(rule, value,callback)=>{
            console.log(value)
            let regNum = /^[0-9]*$/
            if(value === ''){
@@ -90,16 +90,12 @@ export default {
         },
         //表单配置
         formConfig:[
-            {
-                type:'input' ,label:'停车场名称',placeholder:'请输入停车场名称',prop:'parkingName',width:'300px',
-                required:true,
-                
-            },
+            {type:'input' ,label:'停车场名称',placeholder:'请输入停车场名称',prop:'parkingName',width:'300px',required:true,},
             {type:'solt' , soltName:'city', label:'区域', prop:'area'},
             {type:'input' ,label:'街道名称',placeholder:'请输入街道名称',prop:'address',width:'300px',  required:true,},
             {type:'radio' ,label:'类型',prop:'type',option:this.$store.state.config.parking_type,},
             {type:'input' ,label:'可停放车辆',placeholder:'请输入车辆数目',prop:'carsNumber',width:'300px'},
-            {type:'radio' ,label:'禁启用',prop:'status',option:this.$store.state.config.parking_status,},
+            {type:'disabledRadio' ,label:'禁启用',prop:'status',},
             {type:'solt' , soltName:'map', label:'地图'},
             {type:'input' ,label:'经纬度',placeholder:'请选择经纬度',prop:'lnglat',width:'300px',disabled:true},
         ],
@@ -128,7 +124,7 @@ export default {
                         addParking(this.form_data).then(res=>{
                             if(res.resCode == 0){
                             this.$message.success(res.message);
-                            this.$refs[formName].resetFields();
+                            // this.$refs[formName].resetFields();
                             this.button_status = false
                             _this.$refs.amap.clearMarker()
                             _this.$refs.area.clearArea()

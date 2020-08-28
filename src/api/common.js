@@ -10,3 +10,23 @@ export function tableLoad(params){
         data:params.data
     })
 }
+
+//获取车辆品牌接口
+
+export function getCarsBrand(data ={}){
+    return service.request({
+        method: "post",
+        url: '/common/getCarsBrand/',
+        data
+    })
+}
+
+//获取t停车场
+
+export function getCommonParking(data ={}){
+    return service.request({
+        method: "post",
+        url: '/common/getParking/',
+        data
+    })
+}
