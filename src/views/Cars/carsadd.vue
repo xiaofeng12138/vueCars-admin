@@ -14,80 +14,53 @@
                </el-row>
             </template>
             <template v-slot:clAttr = 'slotData'>
-                <div v-for="(item,index) in cars_attr" :key="index" style="margin-bottom:10px;overflow:hidden">
+                <el-button type="primary" @click="addAttr">添加车辆属性</el-button>
+                <div v-for="(item,index) in cars_attr" :key="index" style="margin-top:10px;overflow:hidden">
                     <el-row :gutter="20">
                         <el-col :span="2">
-                            <el-input value="100"></el-input>
+                            <el-input v-model="item.attr_key"></el-input>
                         </el-col>
                         <el-col :span="3">
-                            <el-input value="100"></el-input>
+                            <el-input v-model="item.attr_value"></el-input>
                         </el-col>
                         <el-col :span="6">
-                            <el-button type="primary" v-if="index == 0" @click="addAttr">+</el-button>
-                            <el-button  v-else>-</el-button>
+                            <el-button @click="removeAttr(index)">删除</el-button>
                         </el-col>
                     </el-row>
                 </div>
             </template>
              <template v-slot:clEnergyType>
-                    <el-radio-group v-model="form_data.energyType">
+                    <el-radio-group v-model="form_data.energyType" @change='changeEngertype'>
                         <el-radio v-for="(item,index) in energyTypeRadio"  :key="index" :label="item.value" >{{item.label}}</el-radio>
                     </el-radio-group>
                     <div class="energy_bar_wrap" v-if="form_data.energyType == 1">
                         <span class="label-text">电量</span>
-                        <el-row :gutter="20">
-                            <el-col :span="6">
-                                <div class="energy_bar">
-                                    <span style="width:50%">
-                                        <label>90%</label>
-                                    </span>
-                                </div>
-                            </el-col>
-                            <el-col :span="2">
-                                <el-input size="small" value="100"></el-input>
+                         <el-row >
+                            <el-col :span="10">
+                                   <el-slider v-model="form_data.electric" show-input></el-slider>
                             </el-col>
                         </el-row>
+                    
                     </div>
                     <div class="energy_bar_wrap" v-if="form_data.energyType == 2">
                         <span class="label-text">油量</span>
-                        <el-row :gutter="20">
-                            <el-col :span="6">
-                                <div class="energy_bar">
-                                    <span style="width:50%">
-                                        <label>90%</label>
-                                    </span>
-                                </div>
-                            </el-col>
-                            <el-col :span="2">
-                                <el-input size="small" value="100"></el-input>
+                       <el-row >
+                            <el-col :span="10">
+                                   <el-slider v-model="form_data.oil" show-input></el-slider>
                             </el-col>
                         </el-row>
                     </div>
                      <div class="energy_bar_wrap" v-if="form_data.energyType == 3 ">
                         <span class="label-text">电量</span>
-                        <el-row :gutter="20">
-                            <el-col :span="6">
-                                <div class="energy_bar">
-                                    <span style="width:50%">
-                                        <label>90%</label>
-                                    </span>
-                                </div>
-                            </el-col>
-                            <el-col :span="2">
-                                <el-input size="small" value="100"></el-input>
+                        <el-row >
+                            <el-col :span="10">
+                                   <el-slider v-model="form_data.electric" show-input></el-slider>
                             </el-col>
                         </el-row>
                         <span class="label-text">油量</span>
-                        <el-row :gutter="20">
-                            <el-col :span="6">
-                                <div class="energy_bar">
-                                    <span style="width:50%">
-                                        <label>90%</label>
-                                    </span>
-                                </div>
-                            </el-col>
-                            <el-col :span="2">
-                                <el-input size="small" value="100"></el-input>
+                         <el-row >
+                            <el-col :span="10">
+                                   <el-slider v-model="form_data.oil" show-input></el-slider>
                             </el-col>
                         </el-row>
                     </div>
@@ -224,6 +197,7 @@
 import Editor from 'wangeditor'
 import FormData from '@c/form/index'
 import {getCarsBrand,getCommonParking} from '@/api/common'
+import {CarsAdd} from '@/api/cars.js'
 export default {
     components:{FormData},
     data() {
@@ -231,13 +205,7 @@ export default {
         //车辆能源
         energyTypeRadio:this.$store.state.config.energyType,
         editor:null,//富文本对象
-        cars_attr:[
-            {key:100,value:100},
-            {key:100,value:100},
-            {key:100,value:100},
-            {key:100,value:100},
-            {key:100,value:100},
-        ],
+        cars_attr:[],
        
         //表单配置选项
         formConfig:[
@@ -321,6 +289,13 @@ export default {
                 required:true,
                 
             },
+             {
+                type:'radio',
+                label:'禁启用',
+                prop:'status',
+                required:true,
+                option:this.$store.state.config.brand_status
+            },
             {
                 type:'solt',
                 label:'车辆属性',
@@ -342,10 +317,11 @@ export default {
             carsFrameNumber:'', //车架号
             engineNumber:'', //发动机号
             yearCheck:true,  //年检（true：已年检，false：未年检）
-            gear:"1" ,//档位（1：手动，2：自动，3：人工智能）
+            gear:1 ,//档位（1：手动，2：自动，3：人工智能）
             energyType:1, //能源类型（1：电，2：油，3：混合动力）
-            electric:"", //电量
-            oil:"",//油量
+            electric:100, //电量
+            oil:100,//油量
+            status:true,
             carsAttr:"" ,//车辆属性（{'颜色': '红色', '驱动':'四驱'}）
             content:"" ,//内容介绍
             maintainDate:"", // 保养日期
@@ -385,15 +361,42 @@ export default {
             })
         },
         submitForm(){
+            this.formatCarAttr()
             console.log(this.form_data)
+            CarsAdd(this.form_data).then(res=>{
+                console.log(res)
+            })
         },
         addAttr(){
-            this.cars_attr.push({key:100,value:100})
+            this.cars_attr.push({attr_key:'',attr_value:''})
+        },
+        removeAttr(index){
+            this.cars_attr.splice(index,1)
         },
         createEditor(){
             this.editor = new Editor(this.$refs.editorDom)
-            this.editor.customConfig.onchange = html =>{}
+            this.editor.customConfig.onchange = html =>{
+                this.form_data.content = html
+            }
             this.editor.create()  //创建富文本实例
+        },
+        /**车辆属性格式化*/
+        formatCarAttr(){
+            const data =  this.cars_attr
+            if(data && data.length == 0){ return false}
+            const attrJson = {}
+            data.forEach((item)=>{
+                console.log(item)
+                if(item.attr_key){
+                    attrJson[item.attr_key] = item.attr_value
+                }
+            })
+            this.form_data.carsAttr = JSON.stringify(attrJson)
+        },
+        //修改能源切换函数
+        changeEngertype(value){
+         this.form_data.electric = 0
+         this.form_data.oil = 0
         }
     },
     beforeMount(){

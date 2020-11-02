@@ -6,8 +6,8 @@ const state = {
 
     //停车场类型
     parking_type:[
-        {label:"室内",value:true},
-        {label:"室外",value:false}
+        {label:"室内",value:1},
+        {label:"室外",value:2}
     ],
     //停车场状态
     parking_status:[
