@@ -65,131 +65,10 @@
                         </el-row>
                     </div>
             </template>
-            <template v-slot:clDesc = 'slotData'>
+            <!-- <template v-slot:clDesc = 'slotData'>
                  <div ref="editorDom" style="text-align:left"></div>
-            </template>
+            </template> -->
         </FormData>
-
-        <!-- <el-form ref="form" :model="form" label-width="120px">
-                <el-form-item label="车辆品牌">
-                    <el-select v-model="form.region" placeholder="请选择活动区域">
-                    <el-option label="福特" value="shanghai"></el-option>
-                    <el-option label="劳斯莱斯" value="beijing"></el-option>
-                    <el-option label="马自达" value="22"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="车辆型号">
-                    <el-select v-model="form.region" placeholder="请选择活动区域">
-                    <el-option label="福特" value="shanghai"></el-option>
-                    <el-option label="劳斯莱斯" value="beijing"></el-option>
-                    <el-option label="马自达" value="22"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="停车场">
-                    <el-select v-model="form.region" placeholder="请选择活动区域">
-                    <el-option label="福特" value="shanghai"></el-option>
-                    <el-option label="劳斯莱斯" value="beijing"></el-option>
-                    <el-option label="马自达" value="22"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="车牌号" >
-                    <el-input v-model="form.name"></el-input>
-                </el-form-item>
-                <el-form-item label="车架号" >
-                    <el-input v-model="form.name"></el-input>
-                </el-form-item>
-                <el-form-item label="发动机号" >
-                    <el-input v-model="form.name"></el-input>
-                </el-form-item>
-                <el-form-item label="年检">
-                    <el-radio-group v-model="form.resource">
-                        <el-radio label="已年检"></el-radio>
-                        <el-radio label="未年检"></el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="保养日期" >
-                    <el-row :gutter="20">
-                        <el-col :span="6">
-                            <div>
-                                <el-input v-model="form.name"></el-input>
-                            </div>
-                        </el-col>
-                        <el-col :span="17">
-                            <div>
-                                下次保养日期：2020-12-01
-                            </div>
-                        </el-col>
-                    </el-row>
-                    
-                </el-form-item>
-                <el-form-item label="档位">
-                    <el-radio-group v-model="form.resource">
-                        <el-radio label="手动挡"></el-radio>
-                        <el-radio label="自动挡"></el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="能源类型">
-                    <el-radio-group v-model="form.energy">
-                        <el-radio :label="1">电</el-radio>
-                        <el-radio :label="2">油</el-radio>
-                        <el-radio :label="3">油电混合</el-radio>
-                    </el-radio-group>
-                    <div class="energy_bar_wrap" v-if="form.energy == 1 || form.energy == 3">
-                        <span class="label-text">电量</span>
-                        <el-row :gutter="20">
-                            <el-col :span="6">
-                                <div class="energy_bar">
-                                    <span style="width:50%">
-                                        <label>90%</label>
-                                    </span>
-                                </div>
-                            </el-col>
-                            <el-col :span="2">
-                                <el-input size="small" value="100"></el-input>
-                            </el-col>
-                        </el-row>
-                    </div>
-                    <div class="energy_bar_wrap" v-if="form.energy == 2 || form.energy == 3">
-                        <span class="label-text">油量</span>
-                        <el-row :gutter="20">
-                            <el-col :span="6">
-                                <div class="energy_bar">
-                                    <span style="width:50%">
-                                        <label>90%</label>
-                                    </span>
-                                </div>
-                            </el-col>
-                            <el-col :span="2">
-                                <el-input size="small" value="100"></el-input>
-                            </el-col>
-                        </el-row>
-                    </div>
-                </el-form-item>
-                <el-form-item label="车辆属性">
-                    <div v-for="(item,index) in cars_attr" :key="index" style="margin-bottom:10px;overflow:hidden">
-                        <el-row :gutter="20">
-                            <el-col :span="2">
-                                <el-input value="100"></el-input>
-                            </el-col>
-                            <el-col :span="3">
-                                <el-input value="100"></el-input>
-                            </el-col>
-                            <el-col :span="6">
-                                <el-button type="primary" v-if="index == 0" @click="addAttr">+</el-button>
-                                <el-button  v-else>-</el-button>
-                            </el-col>
-                        </el-row>
-                    </div>
-                
-                </el-form-item>
-                <el-form-item label="车辆描述">
-                <div ref="editorDom" style="text-align:left"></div>
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary">立即创建</el-button>
-                
-                </el-form-item>
-        </el-form> -->
     </div>
 </template>
 
@@ -197,7 +76,7 @@
 import Editor from 'wangeditor'
 import FormData from '@c/form/index'
 import {getCarsBrand,getCommonParking} from '@/api/common'
-import {CarsAdd} from '@/api/cars.js'
+import {CarsAdd,CarsDetailded,CarsEdit} from '@/api/cars.js'
 export default {
     components:{FormData},
     data() {
@@ -272,7 +151,6 @@ export default {
                 soltName:'bydate',
                 placeholder:'请输入保养日期',
                 prop:'maintainDate',
-                required:true,
             },
             {
                 type:'radio',
@@ -286,7 +164,6 @@ export default {
                 label:'能源类型',
                 soltName:'clEnergyType',
                 prop:'energyType',
-                required:true,
                 
             },
              {
@@ -303,9 +180,8 @@ export default {
                 prop:'carsAttr',
             },
             {
-                type:'solt',
+                type:'Wangeditor',
                 label:'车辆描述',
-                soltName:'clDesc',
                 prop:'content',
             },
         ],
@@ -330,9 +206,10 @@ export default {
         //提交按钮部分
         btnConfig:[
             {
-                type:'primary',label:'提交',hander:()=>this.submitForm()
+                type:'primary',label:'提交',hander:()=>this.submitForm('vueForm')
             }
         ],
+        id:this.$route.query.id,
       }
     },
     methods:{
@@ -360,12 +237,29 @@ export default {
                 }
             })
         },
-        submitForm(){
+        submitForm(formName){
             this.formatCarAttr()
-            console.log(this.form_data)
-            CarsAdd(this.form_data).then(res=>{
-                console.log(res)
-            })
+            this.$refs.vueForm.$refs.form.validate((valid) => {
+                if (valid) {
+                   this.id ? this.edit():this.add()
+                } else {
+                    console.log('error submit!!');
+                    return false;
+                 }
+                });
+        },
+        add(){
+             CarsAdd(this.form_data).then(res=>{
+                this.$message.success(res.message)
+                this.$refs.vueForm.resetForm()
+                this.cars_attr = []
+                this.form_data.content = ''
+              })
+        },
+        edit(){
+             CarsEdit({...this.form_data,id:this.id}).then(res=>{
+                this.$message.success(res.message)
+              })
         },
         addAttr(){
             this.cars_attr.push({attr_key:'',attr_value:''})
@@ -373,13 +267,7 @@ export default {
         removeAttr(index){
             this.cars_attr.splice(index,1)
         },
-        createEditor(){
-            this.editor = new Editor(this.$refs.editorDom)
-            this.editor.customConfig.onchange = html =>{
-                this.form_data.content = html
-            }
-            this.editor.create()  //创建富文本实例
-        },
+       
         /**车辆属性格式化*/
         formatCarAttr(){
             const data =  this.cars_attr
@@ -397,16 +285,36 @@ export default {
         changeEngertype(value){
          this.form_data.electric = 0
          this.form_data.oil = 0
-        }
+        },
+        /**获取车辆详情*/
+         getDetail(){
+            if(!this.id){return false}
+            CarsDetailded({id:this.id}).then(res=>{
+                const data = res.data
+                for(let key in data){
+                    if(Object.keys(this.form_data).includes(key)){
+                        this.form_data[key] = data[key]
+                    }
+                }
+                /**车辆属性还原*/
+                let carAttr = JSON.parse(data.carsAttr)
+                const arr =[]
+                for(let key in carAttr){
+                    const json ={}
+                    json.attr_key = key
+                    json.attr_value = carAttr[key]
+                    arr.push(json)
+                }
+                this.cars_attr = arr
+            })
+        },
     },
     beforeMount(){
         this.getSelectBrand()
         this.getSelectPark()
+        this.getDetail()
     },
-    mounted(){
-        this.createEditor()
-        
-    }
+    mounted(){}
 }
 </script>
 <style lang="scss" >

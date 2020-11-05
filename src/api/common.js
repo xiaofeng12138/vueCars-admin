@@ -11,8 +11,17 @@ export function tableLoad(params){
     })
 }
 
-//获取车辆品牌接口
+//表格封装删除数据接口
+export function deleteFn(params){
+    console.log(params)
+    return service.request({
+        method: "post",
+        url: requestUrl[`${params.url}Delete`],
+        data:params.data
+    })
+}
 
+//获取车辆品牌接口
 export function getCarsBrand(data ={}){
     return service.request({
         method: "post",

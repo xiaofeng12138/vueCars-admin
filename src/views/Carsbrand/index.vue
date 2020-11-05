@@ -23,7 +23,6 @@
          <tableData  :configTable="tableConfig" ref="loadTable">
              <!-- 禁启用的插槽 -->
             <template v-slot:status = 'slotData'>
-                {{slotData.data.status}}
                 <el-switch :disabled="status_disabled" v-model="slotData.data.status"  @change="changeStatus(slotData.data)" active-color="#13ce66"  inactive-color="#ff4949"> </el-switch>
             </template>
              <!-- 查看地图的插槽 -->

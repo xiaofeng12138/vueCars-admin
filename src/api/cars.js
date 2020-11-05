@@ -1,15 +1,6 @@
 import service from "../utils/request";
 
 
-/**获取logo*/
-export function GetBrandLogo(data){
-    return service.request({
-        method: "post",
-        url: "/brand/logo/",
-        data
-    })
-}
-
 
 /**新增车辆品牌*/
 export function CarsAdd(data){
@@ -20,38 +11,38 @@ export function CarsAdd(data){
     })
 }
 
-/**删除车辆品牌*/
-export function BrandDelete(data){
+/**删除车辆*/
+export function CarsDelete(data){
     return service.request({
         method: "post",
-        url: "/brand/delete/",
+        url: "/cars/delete/",
         data
     })
 }
 
 /**禁启用状态*/
-export function BrandStatus(data){
+export function CarsStatus(data){
     return service.request({
         method: "post",
-        url: "/brand/status/",
+        url: "/cars/status/",
         data
     })
 }
 
 /**详情*/
-export function BrandDetailded(data){
+export function CarsDetailded(data){
     return service.request({
         method: "post",
-        url: "/brand/detailed/",
+        url: "/cars/detailed/",
         data
     })
 }
 
 /**编辑*/
-export function BrandEdit(data){
+export function CarsEdit(data){
     return service.request({
         method: "post",
-        url: "/brand/edit/",
+        url: "/cars/edit/",
         data
     })
 }

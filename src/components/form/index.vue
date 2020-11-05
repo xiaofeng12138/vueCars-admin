@@ -18,6 +18,12 @@
             <el-radio-group  v-if="item.type == 'radio'"  v-model="formData[item.prop]">
                 <el-radio v-for="(item,index) in item.option" :label="item.value" :key="index">{{item.label}}</el-radio>
             </el-radio-group>
+
+            <!-- 富文本编辑器 -->
+            <template  v-if="item.type == 'Wangeditor'">
+                <Wangeditor  :isClear="wangeditorClear" ref="wangeditor" :value="formData[item.prop]"  :content.sync ="formData[item.prop]" />
+            </template>
+             
         </el-form-item>
         <!-- 按钮部分 -->
         <el-form-item>
@@ -27,7 +33,9 @@
     </div>
 </template>
 <script>
+import Wangeditor from '@c/wangeditor/index'
 export default {
+  components:{Wangeditor},
     props:{
        formItem:{
            type:Array,
@@ -44,16 +52,25 @@ export default {
     },
     data(){
         return{
+          wangeditorClear:false,
           disabled_radio:this.$store.state.config.brand_status,
             msg_type:{
                 'input':'请输入',
-                'Radio':'请选择'
+                'radio':'请选择',
+                'select':'请选择'
             }
         }
     },
     methods:{
         fn(){
             console.log(this.form)
+        },
+        resetForm(){
+          this.$refs.form.resetFields()
+          //清除富文本内容
+          if(this.$refs.wangeditor){
+            this.wangeditorClear = !this.wangeditorClear
+          }
         },
         initFormData(){
            this.formItem.forEach((item)=>{
@@ -66,7 +83,7 @@ export default {
             let normalRules = [{required: true, message: item.requiredMsg || `${this.msg_type[item.type]}${item.label}`, trigger: "change"}];
             if (item.rules && item.rules.length > 0) {
               item.rules = normalRules.concat(item.rules);
-              console.log(item.rules);
+              // console.log(item.rules);
             } else {
               item.rules = normalRules;
             }

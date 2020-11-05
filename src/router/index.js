@@ -108,14 +108,14 @@ const routes = [
         },
         component: () => import("../views/Cars/carsadd.vue"),
       },
-      // {
-      //   path: "/parkingAdd",
-      //   name: "ParkingAdd",
-      //   meta: {
-      //     title: "新增停车场"
-      //   },
-      //   component: () => import("../views/Parking/parkingadd.vue"),
-      // }
+      {
+        path: "/carslist",
+        name: "Carslist",
+        meta: {
+          title: "车辆列表"
+        },
+        component: () => import("../views/Cars/carslist.vue"),
+      }
     ],
   },
 ];
