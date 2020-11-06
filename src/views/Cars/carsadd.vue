@@ -297,15 +297,18 @@ export default {
                     }
                 }
                 /**车辆属性还原*/
-                let carAttr = JSON.parse(data.carsAttr)
-                const arr =[]
-                for(let key in carAttr){
-                    const json ={}
-                    json.attr_key = key
-                    json.attr_value = carAttr[key]
-                    arr.push(json)
-                }
-                this.cars_attr = arr
+                if(data.carsAttr){
+                    let carAttr = JSON.parse(data.carsAttr)
+                    const arr =[]
+                    for(let key in carAttr){
+                        const json ={}
+                        json.attr_key = key
+                        json.attr_value = carAttr[key]
+                        arr.push(json)
+                    }
+                    this.cars_attr = arr
+                    }
+               
             })
         },
     },

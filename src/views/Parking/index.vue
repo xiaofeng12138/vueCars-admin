@@ -97,11 +97,24 @@ export default {
                         type:'slot',
                         slotName:'lnglat'
                     },
-                    {
+                    // {
+                    //     prop:'',
+                    //     label:'操作',
+                    //     type:'slot',
+                    //     slotName:'operate'
+                    // },
+                     {
                         prop:'',
+                        type:'operation',
                         label:'操作',
-                        type:'slot',
-                        slotName:'operate'
+                        defaultBtn:{
+                            deleteBtn:true,
+                            editBtn:true,
+                            routerLink:'ParkingAdd',  
+                            defaultClick:false,  //通关点击事件触发跳转
+                            defaultParams:'id'
+                        },
+                        // slotName:'operationBtn'
                     },
                 ],
                 checkbox:true,

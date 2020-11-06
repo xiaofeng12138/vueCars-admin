@@ -16,7 +16,7 @@ export function deleteFn(params){
     console.log(params)
     return service.request({
         method: "post",
-        url: requestUrl[`${params.url}Delete`],
+        url: requestUrl[params.url],
         data:params.data
     })
 }

@@ -43,9 +43,12 @@
                  <el-switch :disabled="status_disabled" v-model="slotData.data.status" @change="changeStatus(slotData.data)"  active-color="#13ce66"  inactive-color="#ff4949"> </el-switch>
             </template>
              <!-- 操作按钮的插槽 -->
-             <template v-slot:operate = 'slotData'>
+            <!-- <template v-slot:operate = 'slotData'>
                   <el-button size="mini" @click="edit(slotData.data.id)">编辑</el-button>
                   <el-button  size="mini"  type="danger" @click="delFn(slotData.data.id)">删除</el-button>
+            </template> -->
+             <template v-slot:operationBtn = 'slotData'>
+                  <el-button size="mini" @click="edit(slotData.data.id)">修改</el-button>
             </template>
          </tableData>
        
@@ -107,8 +110,13 @@ export default {
                         type:'operation',
                         label:'操作',
                         defaultBtn:{
-                            deleteBtn:true
-                        }
+                            deleteBtn:true,
+                            editBtn:true,
+                            routerLink:'CarsaddIndex',  
+                            defaultClick:false,  //通关点击事件触发跳转
+                            defaultParams:'id'
+                        },
+                        // slotName:'operationBtn'
                     },
                 ],
                 checkbox:true,
@@ -150,34 +158,6 @@ export default {
                 }
             }).catch(err=>{
                 this.status_disabled = false
-            })
-        },
-        //删除函数
-        delFn(row){
-            this.$confirm('确认删除吗?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning' 
-            }).then(() => {
-            CarsDelete({id:row}).then((res)=>{
-                if(res.resCode == 0){
-                    this.$refs.loadTable.requestLoadData()
-                    this.$message({
-                        type: 'success',
-                        message: res.message
-                    });
-                }
-            })
-            }).catch(() => { });
-        },
-        //编辑
-        edit(row){
-            let id = (row)*1
-            this.$router.push({
-                name:"CarsaddIndex",
-                query:{
-                    id
-                }
             })
         },
         openMap(row){

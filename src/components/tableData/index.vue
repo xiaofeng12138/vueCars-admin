@@ -1,5 +1,6 @@
 <template>
     <div>
+        <formSearch :formItem = "form_item"   />
           <el-table :data="tableData"  border style="width: 100%"   v-loading="tableLoading"  element-loading-text="数据加载中">
             <el-table-column v-if="table_config.checkbox" type="selection" width="55" align="center"></el-table-column>
             <template v-for="(item,index) in table_config.thead" >
@@ -12,7 +13,7 @@
                      <template slot-scope="scope">
                          <slot :name = 'item.slotName' :data = 'scope.row'></slot>
                      </template>
-                 </el-table-column>
+                 </el-table-column> 
                   <el-table-column v-else-if ="item.type == 'image'" :prop="item.prop"  :label="item.label" align="center" :width="item.width">
                      <template slot-scope="scope">
                          <img :src="scope.row[item.prop]" :width = 'item.imgWidth || 50'  alt="">
@@ -20,7 +21,15 @@
                  </el-table-column>
                  <el-table-column v-else-if ="item.type == 'operation'" :prop="item.prop"  :label="item.label" align="center" :width="item.width">
                       <template slot-scope="scope">
+                            <template v-if="item.defaultBtn && item.defaultBtn.editBtn">
+                                <el-button  size="mini" v-if="item.defaultBtn.defaultClick" @click="editFn(scope.row[item.defaultBtn.defaultParams || 'id'],item.defaultBtn.routerLink)">编辑</el-button>
+                                <router-link  v-else :to="{name:item.defaultBtn.routerLink,query:{[item.defaultBtn.defaultParams || 'id']:scope.row.id}}" class="mr-10">
+                                       <el-button  size="mini" >编辑</el-button>
+                                </router-link>
+                            </template>
                          <el-button  size="mini"  type="danger" v-if="item.defaultBtn && item.defaultBtn.deleteBtn" @click="delFn(scope.row.id)">删除</el-button>
+                         <!-- 定义按钮 -->
+                         <slot v-if="item.slotName" :name = 'item.slotName' :data = 'scope.row'></slot>
                       </template>
                  </el-table-column>
                  <el-table-column v-else :prop="item.prop"  :label="item.label" align="center"> </el-table-column>
@@ -46,7 +55,9 @@
 
 <script>
 import { tableLoad,deleteFn } from '@/api/common.js'
+import formSearch from '../formSearch/index'
 export default {
+    components:{formSearch},
     props:{
         configTable:{
             type:Object,
@@ -55,6 +66,17 @@ export default {
     },
     data() {
         return {
+            form_item:[
+                { label:'城市', type:'city'},
+                { label:'类型', prop:'type' ,type:'select',width:'120px',options:"parking_type"},
+                { label:'禁启用', prop:'status' , type:'select',width:'120px',options:"brand_status"},
+                { label:'关键字',type:'keyword'},
+            ],
+            form_data:{
+                type:'',
+                status:'',
+            },
+
             tableLoading:true, //表格加载loading
             tableData:[],
             table_config:{
@@ -68,10 +90,16 @@ export default {
         }
     },
     methods:{
+        editFn(id,url){
+            this.$router.push({
+                name:url,
+                query:{id}
+            })
+        },
         handleCurrentChange(){},
         initTableData(){
             let requsetData ={
-                url:this.table_config.url,
+                url:this.table_config.url ,
                 data:this.table_config.data
             }
           tableLoad(requsetData).then(res=>{
@@ -108,9 +136,8 @@ export default {
             cancelButtonText: '取消',
             type: 'warning' 
             }).then(() => {
-                console.log(3333)
                 let requset = {
-                     url:this.table_config.url,
+                     url:this.table_config.url + 'Delete',
                      data:{id:row}
                 }
                 deleteFn(requset).then((res)=>{
@@ -137,7 +164,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-
+.mr-10{
+    margin-right: 15px;
+}
 </style>
 
 

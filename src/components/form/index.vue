@@ -6,7 +6,7 @@
             <el-input  v-if="item.type === 'input'" v-model="formData[item.prop]" :placeholder="item.placeholder" :style="{'width':item.width}" :disabled="item.disabled"></el-input>
               <!-- select -->
             <el-select  v-if="item.type === 'select'" v-model="formData[item.prop]" :placeholder="item.placeholder" :style="{'width':item.width}">
-               <el-option v-for="(tt,index) in item.selectItem" :key="index" :label="tt.leabl || tt[item.select_label] " :value="tt.value ||tt[item.select_value]"></el-option>
+               <el-option v-for="(tt,index) in item.selectItem" :key="index" :label="tt.label || tt[item.select_label] " :value="tt.value ||tt[item.select_value]"></el-option>
             </el-select>
              <!-- slot -->
             <slot v-if="item.type == 'solt'" :name="item.soltName"></slot>
