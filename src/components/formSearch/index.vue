@@ -11,11 +11,11 @@
 
             <!-- 省市区 -->
             <div v-if="item.type === 'city'">
-                <CityArea />
+                <CityArea  ref="city_temp" :areaValue.sync = 'city_type' />
             </div>
             <!-- 关键字 -->
             <div v-if="item.type === 'keyword'">
-                <KeyWord :options="['parkingName']" />
+                <KeyWord ref="keyword_temp" :options="['parkingName','address']" :value.sync = 'keyWord' />
             </div>
              <!-- slot -->
             <slot v-if="item.type == 'solt'" :name="item.soltName"></slot>
@@ -23,8 +23,16 @@
         <!-- 按钮部分 -->
         <el-form-item>
           <el-button type="danger" @click="search">搜索</el-button>
-            <el-button v-for="(item,index) in formBtn" :key="item.index" :type="item.type" @click="item.hander && item.hander()" >{{item.label}}</el-button>
+          <el-button v-if="buttonConfig.resetButton" type="danger" @click="resetFn">重置</el-button>
+            <template v-for="(item,index) in formHander">
+              <router-link v-if="item.elememt === 'link'" :to="item.router"  :key="index" style="margin-left:15px">
+                  <el-button  :type="item.type">{{item.label}}</el-button>
+              </router-link>
+
+               <el-button style="margin-left:15px" v-if="item.elememt === 'button'" :type="item.type" @click="item.handler && item.handler()">{{item.label}}</el-button>
+            </template>
         </el-form-item>
+        
      </el-form>
     </div>
 </template>
@@ -38,28 +46,55 @@ export default {
            type:Array,
            default:()=>[]
        },
-       formBtn:{
+       buttonConfig:{
+         type:Object,
+         default:()=>{}
+       },
+       formHander:{
            type:Array,
-           default:()=>{}
+           default:()=>[]
        },
     },
     data(){
         return{
+          keyWord:{},
+          city_type:'',
           form_data:{}
         }
     },
     methods:{
+      // download(){
+      //   alert('3333')
+      // },
+      //重置函数
+      resetFn(){
+         this.$refs.form.resetFields();
+         if(this.$refs.city_temp){this.$refs.city_temp[0].clearArea()}
+         if(this.$refs.keyword_temp){this.$refs.keyword_temp[0].clear()}
+      },
       //搜索
         search(){
-          console.log(this.form_data)
+          let requestObj ={}
+          for(let key in this.form_data){
+            if(this.form_data[key]){
+              requestObj[key] = this.form_data[key]
+            }
+          }
+          if(this.$refs.keyword_temp && this.keyWord.key && this.keyWord.value){
+               requestObj[this.keyWord.key]  =  this.keyWord.value
+          }
+          //处理省市区字段
+          if(this.$refs.city_temp && this.city_type){
+               requestObj.area  =  this.city_type
+          }
+          this.$emit('componentFn',{
+            function:'search',
+            data:requestObj
+          })
         },
       //重置表单
         resetForm(){
           this.$refs.form.resetFields()
-          //清除富文本内容
-          if(this.$refs.wangeditor){
-            this.wangeditorClear = !this.wangeditorClear
-          }
         },
         initFormData(){
            this.formItem.forEach((item)=>{

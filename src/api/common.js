@@ -30,12 +30,22 @@ export function getCarsBrand(data ={}){
     })
 }
 
-//获取t停车场
+//获取停车场
 
 export function getCommonParking(data ={}){
     return service.request({
         method: "post",
         url: '/common/getParking/',
+        data
+    })
+}
+
+//获取七牛云token
+
+export function getQiniuToken(data ={}){
+    return service.request({
+        method: "post",
+        url: '/uploadImgToken/',
         data
     })
 }

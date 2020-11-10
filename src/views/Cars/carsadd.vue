@@ -139,6 +139,12 @@ export default {
                 required:true,
             },
             {
+                type:'upload',
+                label:'缩略图',
+                prop:'carsImg',
+                required:true,
+            },
+            {
                 type:'radio',
                 label:'年检',
                 prop:'yearCheck',
@@ -202,6 +208,7 @@ export default {
             content:"" ,//内容介绍
             maintainDate:"", // 保养日期
             status:"", //状态
+            carsImg:'',
         },
         //提交按钮部分
         btnConfig:[
@@ -274,7 +281,6 @@ export default {
             if(data && data.length == 0){ return false}
             const attrJson = {}
             data.forEach((item)=>{
-                console.log(item)
                 if(item.attr_key){
                     attrJson[item.attr_key] = item.attr_value
                 }

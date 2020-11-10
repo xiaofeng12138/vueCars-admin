@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-row :gutter="10">
+        <!-- <el-row :gutter="10">
             <el-col :span="21">
                 <el-form :inline="true" :model="form" class="demo-form-inline">
                      <el-form-item label="区域">
@@ -35,7 +35,7 @@
                 <router-link to='/carsaddIndex'> <el-button  type="danger">新增车辆</el-button></router-link>
                 </div>
         </el-col>
-        </el-row>
+        </el-row> -->
         
          <tableData  :configTable="tableConfig" ref="loadTable">
              <!-- 禁启用的插槽 -->
@@ -74,6 +74,10 @@ export default {
                         prop:'imgUrl',
                         type:'image',
                         label:'车辆LOGO',
+                    }, {
+                        prop:'carsImg',
+                        type:'image',
+                        label:'车辆图片',
                     },
                     {
                         prop:'yearCheck',
@@ -109,6 +113,7 @@ export default {
                         prop:'',
                         type:'operation',
                         label:'操作',
+                        width:200,
                         defaultBtn:{
                             deleteBtn:true,
                             editBtn:true,
@@ -124,8 +129,21 @@ export default {
                 data:{
                     pageSize:10,
                     pageNumber:1
-                }
+                },
+                 //搜索框传参
+                form_item:[
+                        { label:'城市', type:'city'},
+                        { label:'类型', prop:'type' ,type:'select',width:'120px',options:"parking_type"},
+                        { label:'禁启用', prop:'status' , type:'select',width:'120px',options:"brand_status"},
+                        { label:'关键字',type:'keyword',width:'150px'},
+                    ],
+                form_hander:[
+                        {label:'新增车辆', prop:'add',type:'success',elememt:'link',router:'/carsaddIndex'},
+                        // {label:'下载', prop:'add',type:'success',elememt:'button',handler:()=>{this.aaa()}},
+                ]
             },
+            
+            
             status_disabled:false,
             paramsData:{},
             show_modal:false,
@@ -144,6 +162,9 @@ export default {
         }
     },
     methods:{
+        aaa(){
+            alert('333')
+        },
         //修改车辆品牌禁启用
         changeStatus(row){
             let requestData ={

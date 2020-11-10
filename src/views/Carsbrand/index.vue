@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-row>
+        <!-- <el-row>
             <el-col :span="18">
                 <el-form :inline="true" :model="form" class="demo-form-inline" label-width="100px">
                     <el-form-item label="车辆品牌">
@@ -16,7 +16,7 @@
                  <el-button  type="danger" @click="dialog_show = true ">新增车辆品牌</el-button>
             </div>
         </el-col>
-        </el-row>
+        </el-row> -->
         
 
         <!--数据表格部分内容-->
@@ -83,8 +83,18 @@ export default {
                 data:{
                     pageSize:10,
                     pageNumber:1
-                }
+                },
+                form_item:[
+                        { label:'车辆品牌', prop:'brand',type:'input',placeholder:'请输入车辆品牌',width:'200px'},
+                    ],
+                    button_config:{
+                        resetButton:false
+                    },
+                    form_hander:[
+                        {label:'新增车辆品牌', prop:'add',type:'success',elememt:'button',handler:()=>{this.dialog_show = true}},
+                    ]
             },
+            
         //弹出框部分
         dialog_show:false,
         form: {

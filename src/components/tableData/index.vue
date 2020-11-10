@@ -1,6 +1,14 @@
 <template>
     <div>
-        <formSearch :formItem = "form_item"   />
+        <!-- 搜索框接收配置选项 -->
+        <formSearch
+        v-if="table_config.show_formSearch"
+         :formItem = "table_config.form_item"  
+         :formHander = "table_config.form_hander"  
+         :buttonConfig = "table_config.button_config "
+         @componentFn = 'componentsChild' 
+        />
+
           <el-table :data="tableData"  border style="width: 100%"   v-loading="tableLoading"  element-loading-text="数据加载中">
             <el-table-column v-if="table_config.checkbox" type="selection" width="55" align="center"></el-table-column>
             <template v-for="(item,index) in table_config.thead" >
@@ -61,17 +69,21 @@ export default {
     props:{
         configTable:{
             type:Object,
-            default:()=>{}
+            default:()=>({})
+        },
+        searchFromConfig:{
+            type:Object,
+            default:()=>({})
         }
     },
     data() {
         return {
-            form_item:[
-                { label:'城市', type:'city'},
-                { label:'类型', prop:'type' ,type:'select',width:'120px',options:"parking_type"},
-                { label:'禁启用', prop:'status' , type:'select',width:'120px',options:"brand_status"},
-                { label:'关键字',type:'keyword'},
-            ],
+            // form_item:[
+            //     { label:'城市', type:'city'},
+            //     { label:'类型', prop:'type' ,type:'select',width:'120px',options:"parking_type"},
+            //     { label:'禁启用', prop:'status' , type:'select',width:'120px',options:"brand_status"},
+            //     { label:'关键字',type:'keyword'},
+            // ],
             form_data:{
                 type:'',
                 status:'',
@@ -85,11 +97,27 @@ export default {
                 url:"",
                 pagination:true,
                 data:{},  
+                show_formSearch:true,
+                form_item:[],
+                button_config:{
+                        resetButton:false
+                },
+                form_hander:[]
             },
             total:0,
         }
     },
     methods:{
+        //子组件调用父组件的方法
+        componentsChild(params){
+            this[params.function](params.data)
+        },
+        search(data){
+            let requsetData = data
+            requsetData.pageNumber  = 1
+            requsetData.pageSize  = 10
+            this.requestLoadData(requsetData)
+        },
         editFn(id,url){
             this.$router.push({
                 name:url,
@@ -149,8 +177,7 @@ export default {
                         this.initTableData()
                     }
             })
-            }).catch(() => { 
-                console.log(7777)});
+            }).catch(() => {});
         }
     },
     watch:{

@@ -23,6 +23,11 @@
             <template  v-if="item.type == 'Wangeditor'">
                 <Wangeditor  :isClear="wangeditorClear" ref="wangeditor" :value="formData[item.prop]"  :content.sync ="formData[item.prop]" />
             </template>
+
+            <!-- 图片上传 -->
+            <template  v-if="item.type == 'upload'">
+                <Upload  :imgSrc = "formData[item.prop]" :value.sync ="formData[item.prop]" />
+            </template>
              
         </el-form-item>
         <!-- 按钮部分 -->
@@ -34,8 +39,9 @@
 </template>
 <script>
 import Wangeditor from '@c/wangeditor/index'
+import Upload from '@c/upload/index'
 export default {
-  components:{Wangeditor},
+  components:{Wangeditor,Upload},
     props:{
        formItem:{
            type:Array,

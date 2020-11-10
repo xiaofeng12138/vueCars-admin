@@ -1,42 +1,5 @@
 <template>
     <div>
-        <el-row :gutter="10">
-            <el-col :span="21">
-                <el-form :inline="true" :model="form" class="demo-form-inline">
-                     <el-form-item label="区域">
-                        <Cascader  ref="area" :areaValue.sync = "form.area"/>
-                    </el-form-item>
-                     <el-form-item label="类型" > 
-                        <el-select v-model="form.type" placeholder="停车场" class="w-100">
-                          <el-option  v-for="(item,index) in carsType"  :label="item.label" :value="item.value" :key="item.value"></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="禁启用" >
-                        <el-select v-model="form.status" placeholder="请选择" class="w-100">
-                          <el-option  v-for="(item,index) in carsStatus"  :label="item.label" :value="item.value" :key="item.value"></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="关键字" >
-                        <el-select  v-model="keyword" placeholder="请选择"  class="w-100">
-                            <el-option label="停车场名称" value="parkingName"></el-option>
-                            <el-option label="详细地址" value="address"></el-option>
-                        </el-select>
-                    </el-form-item>
-                     <el-form-item>
-                       <el-input placeholder="请输入关键字" v-model="search_key"></el-input>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button type="danger" @click="search" >查询</el-button>
-                    </el-form-item>
-                </el-form>
-        </el-col>
-        <el-col :span="3" >
-            <div  class="pull-right">
-                <router-link to='/parkingAdd'> <el-button  type="danger">添加停车场</el-button></router-link>
-                </div>
-        </el-col>
-        </el-row>
-        
          <tableData  :configTable="tableConfig" ref="loadTable">
              <!-- 禁启用的插槽 -->
             <template v-slot:status = 'slotData'>
@@ -122,7 +85,16 @@ export default {
                 data:{
                     pageSize:10,
                     pageNumber:1
-                }
+                },
+                 form_item:[
+                        { label:'城市', type:'city'},
+                        { label:'类型', prop:'type' ,type:'select',width:'120px',options:"parking_type"},
+                        { label:'禁启用', prop:'status' , type:'select',width:'120px',options:"brand_status"},
+                        { label:'关键字',type:'keyword',width:'150px'},
+                    ],
+                    form_hander:[
+                        {label:'新增停车场', prop:'add',type:'success',elememt:'link',router:'/parkingAdd'},
+                    ]
             },
             status_disabled:false,
             paramsData:{},
@@ -189,25 +161,6 @@ export default {
         openMap(row){
             this.paramsData = row
             this.show_modal = true
-        },
-        //搜索
-        search(){
-             let requestData ={
-                  pageSize:10,
-                  pageNumber:1
-            }
-            let newForm = JSON.parse(JSON.stringify(this.form)) //深度拷贝form对象
-            
-            for(let key in newForm){
-                if(newForm[key]){
-                   requestData[key] = newForm[key]
-                }
-            }
-            if(this.keyword && this.search_key){
-                requestData[this.keyword] = this.search_key
-            }
-            this.tableConfig.data = requestData
-            this.$refs.loadTable.requestLoadData(requestData)
         },
     },
 }
