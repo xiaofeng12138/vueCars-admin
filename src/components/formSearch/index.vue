@@ -15,7 +15,7 @@
             </div>
             <!-- 关键字 -->
             <div v-if="item.type === 'keyword'">
-                <KeyWord ref="keyword_temp" :options="['parkingName','address']" :value.sync = 'keyWord' />
+                <KeyWord ref="keyword_temp" :options="item.options" :value.sync = 'keyWord' />
             </div>
              <!-- slot -->
             <slot v-if="item.type == 'solt'" :name="item.soltName"></slot>

@@ -115,6 +115,14 @@ const routes = [
           title: "车辆列表"
         },
         component: () => import("../views/Cars/carslist.vue"),
+      },
+      {
+        path: "/carsattr",
+        name: "Carsattr",
+        meta: {
+          title: "车辆属性"
+        },
+        component: () => import("../views/Cars/carsattr.vue"),
       }
     ],
   },

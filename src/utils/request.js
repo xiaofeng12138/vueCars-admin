@@ -3,6 +3,7 @@ import axios from "axios";
 import { getToken, getUsername } from "./cookies";
 // ElementUI 单独引入
 import { Message } from 'element-ui';
+
 // 创建实例
 const service = axios.create({
     baseURL: process.env.VUE_APP_API,    // 请求地址

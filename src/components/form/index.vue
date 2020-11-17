@@ -69,7 +69,7 @@ export default {
     },
     methods:{
         fn(){
-            console.log(this.form)
+            // console.log(this.form)
         },
         resetForm(){
           this.$refs.form.resetFields()
@@ -89,7 +89,6 @@ export default {
             let normalRules = [{required: true, message: item.requiredMsg || `${this.msg_type[item.type]}${item.label}`, trigger: "change"}];
             if (item.rules && item.rules.length > 0) {
               item.rules = normalRules.concat(item.rules);
-              // console.log(item.rules);
             } else {
               item.rules = normalRules;
             }
@@ -100,10 +99,8 @@ export default {
   watch: {
     formItem: {
       handler(newValve) {
-        console.log(newValve)
         this.initFormData();
       },
-      immediate: true
     }
   }
 };

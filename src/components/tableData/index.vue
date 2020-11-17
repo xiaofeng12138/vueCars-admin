@@ -8,7 +8,7 @@
          :buttonConfig = "table_config.button_config "
          @componentFn = 'componentsChild' 
         />
-
+          <slot name ='content'></slot>
           <el-table :data="tableData"  border style="width: 100%"   v-loading="tableLoading"  element-loading-text="数据加载中">
             <el-table-column v-if="table_config.checkbox" type="selection" width="55" align="center"></el-table-column>
             <template v-for="(item,index) in table_config.thead" >
@@ -89,9 +89,10 @@ export default {
                 status:'',
             },
 
-            tableLoading:true, //表格加载loading
+            tableLoading:false, //表格加载loading
             tableData:[],
             table_config:{
+                isRequest:true,
                 thead:[],
                 checkbox:true,
                 url:"",
@@ -146,13 +147,16 @@ export default {
                   this.table_config[key] = this.configTable[key]
               }
           }
-          this.initTableData()
+           if( this.table_config.isRequest){
+             this.initTableData()
+            }  
         },
         //数据请求函数
         requestLoadData(params){
+            console.log(params)
             if(params){
                 this.table_config.data = params
-                this.initTableData()
+                    this.initTableData()
             }else{
               this.initTableData()
            } 
