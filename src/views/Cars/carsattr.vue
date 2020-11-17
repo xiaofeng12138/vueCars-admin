@@ -108,7 +108,7 @@ export default {
 
         async getCarsType(){
               const data = await this.getAttrList()
-              this.chooseId = data[0].id
+              this.chooseId = data.id
               this.$refs.loadTable.requestLoadData({typeId:data[0].id})
         }
     },

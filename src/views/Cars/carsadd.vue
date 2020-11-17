@@ -14,20 +14,7 @@
                </el-row>
             </template>
             <template v-slot:clAttr = 'slotData'>
-                <el-button type="primary" @click="addAttr">添加车辆属性</el-button>
-                <div v-for="(item,index) in cars_attr" :key="index" style="margin-top:10px;overflow:hidden">
-                    <el-row :gutter="20">
-                        <el-col :span="2">
-                            <el-input v-model="item.attr_key"></el-input>
-                        </el-col>
-                        <el-col :span="3">
-                            <el-input v-model="item.attr_value"></el-input>
-                        </el-col>
-                        <el-col :span="6">
-                            <el-button @click="removeAttr(index)">删除</el-button>
-                        </el-col>
-                    </el-row>
-                </div>
+               <carAttrComponents  ref="carattr" :value.sync ="form_data.carsAttr" />
             </template>
              <template v-slot:clEnergyType>
                     <el-radio-group v-model="form_data.energyType" @change='changeEngertype'>
@@ -73,12 +60,13 @@
 </template>
 
 <script>
+import carAttrComponents from './components/carsAttrList'
 import Editor from 'wangeditor'
 import FormData from '@c/form/index'
 import {getCarsBrand,getCommonParking} from '@/api/common'
 import {CarsAdd,CarsDetailded,CarsEdit} from '@/api/cars.js'
 export default {
-    components:{FormData},
+    components:{FormData,carAttrComponents},
     data() {
       return {
         //车辆能源
@@ -277,15 +265,7 @@ export default {
        
         /**车辆属性格式化*/
         formatCarAttr(){
-            const data =  this.cars_attr
-            if(data && data.length == 0){ return false}
-            const attrJson = {}
-            data.forEach((item)=>{
-                if(item.attr_key){
-                    attrJson[item.attr_key] = item.attr_value
-                }
-            })
-            this.form_data.carsAttr = JSON.stringify(attrJson)
+            this.$refs.carattr.callBackValue()
         },
         //修改能源切换函数
         changeEngertype(value){
