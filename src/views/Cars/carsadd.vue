@@ -14,7 +14,7 @@
                </el-row>
             </template>
             <template v-slot:clAttr = 'slotData'>
-               <carAttrComponents  ref="carattr" :value.sync ="form_data.carsAttr" />
+               <carAttrComponents :ValueKm.sync = "form_data.countKm" :oil="form_data.oil" :initValue = "form_data.carsAttr" ref="carattr" :value.sync ="form_data.carsAttr" />
             </template>
              <template v-slot:clEnergyType>
                     <el-radio-group v-model="form_data.energyType" @change='changeEngertype'>
@@ -160,6 +160,12 @@ export default {
                 prop:'energyType',
                 
             },
+            {
+                type:'input',
+                label:'公里数',
+                prop:'countKm',
+                disabled:true
+            },
              {
                 type:'radio',
                 label:'禁启用',
@@ -197,6 +203,7 @@ export default {
             maintainDate:"", // 保养日期
             status:"", //状态
             carsImg:'',
+            countKm:''
         },
         //提交按钮部分
         btnConfig:[
@@ -283,17 +290,17 @@ export default {
                     }
                 }
                 /**车辆属性还原*/
-                if(data.carsAttr){
-                    let carAttr = JSON.parse(data.carsAttr)
-                    const arr =[]
-                    for(let key in carAttr){
-                        const json ={}
-                        json.attr_key = key
-                        json.attr_value = carAttr[key]
-                        arr.push(json)
-                    }
-                    this.cars_attr = arr
-                    }
+                // if(data.carsAttr){
+                //     let carAttr = JSON.parse(data.carsAttr)
+                //     const arr =[]
+                //     for(let key in carAttr){
+                //         const json ={}
+                //         json.attr_key = key
+                //         json.attr_value = carAttr[key]
+                //         arr.push(json)
+                //     }
+                //     this.cars_attr = arr
+                //     }
                
             })
         },

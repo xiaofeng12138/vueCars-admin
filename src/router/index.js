@@ -126,6 +126,26 @@ const routes = [
       }
     ],
   },
+  {
+    path: "/sale",
+    name: "Sale",
+    meta: {
+      title: "销售管理",
+      icon: "console",
+      iconClass: "icon_console"
+    },
+    component: Layout,
+    children: [
+      {
+        path: "/leaseIndex",
+        name: "LeaseIndexIndex",
+        meta: {
+          title: "租赁类型"
+        },
+        component: () => import("../views/lease/index.vue"),
+      },
+    ],
+  },
 ];
 
 const router = new VueRouter({

@@ -1,6 +1,7 @@
 <template>
     <div>
          <el-button size="small" v-for="(item,index) in carsAttrListArray"  :type = "chooseId == item.id ? 'success':''" :key="index"  @click="choose(item)"> {{item.value}}</el-button>
+        
     </div>
 </template>
 <script>
@@ -15,6 +16,8 @@ export default {
             attr_basis_value:''
         }
     },
+    
+   
     methods:{
          choose(item){
             this.chooseId = item.id

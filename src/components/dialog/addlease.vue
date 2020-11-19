@@ -1,5 +1,5 @@
 <template>
-      <el-dialog title="车辆自定义属性添加" width="30%" :visible.sync="showModal"class="cars_dialgo_center" :close-on-click-modal= false @close ='closeModal'@opened = 'openModal'>
+      <el-dialog title="新增租赁类型" width="30%" :visible.sync="showModal"class="cars_dialgo_center" :close-on-click-modal= false @close ='closeModal'@opened = 'openModal'>
 
       <FormData ref="vueForm" :formData="form_data" :formItem ="formConfig" :formBtn = "btnConfig"></FormData>
         </el-dialog>
@@ -7,7 +7,7 @@
 
 <script>
 import FormData from '@c/form/index'
-import {CarsAttrAdd} from '@/api/carstype.js'
+import {LeaseAdd} from '@/api/lease.js'
 export default {
     props:{
       flagVisible:{
@@ -24,9 +24,9 @@ export default {
         return{
             //表单配置
             formConfig:[
-                    {type:'input' ,label:'当前属性', prop:'typeValue',disabled:true},
-                    {type:'input' ,label:'字段',prop:'key',},
-                    {type:'input' ,label:'文本',prop:'value',},
+                    {type:'input' ,label:'租车类型', prop:'carsLeaseTypeName',required:true},
+                    {type:'disabledRadio' ,label:'禁/启状态',prop:'carsLeaseStatus',required:true},
+                    {type:'Textarea' ,label:'描述',prop:'carsLeaseDesc',},
           
             ],
             btnConfig:[
@@ -35,39 +35,43 @@ export default {
                 }
             ],
             form_data:{
-                key:'',
-                value:'',
-                typeValue:''
+                carsLeaseTypeName:'',
+                carsLeaseStatus:'',
+                carsLeaseDesc:''
             },
             showModal:false,
         }
     },
+ 
     methods:{
-         //清除表单函数
-        resetForm(){
-             
-        },
         //新增提交
         submit(){
-            const requsetData ={
-                typeId:this.data.id,
-                key:this.form_data.key,
-                value:this.form_data.value
-            }
-            CarsAttrAdd(requsetData).then(res=>{
+              this.$refs.vueForm.$refs.form.validate((valid) => {
+                if (valid) {
+                   this.addFn()
+                } else {
+                    console.log('error submit!!');
+                    return false;
+                 }
+                });
+        },
+        addFn(){
+            LeaseAdd({...this.form_data}).then(res=>{
                if(res.resCode == 0){
                    this.$message.success(res.message)
+                   this.showModal = false
                    this.$refs.vueForm.resetForm() //清空表单
+                   this.$emit('callbackComponents',{
+                       function:'loadData'
+                   })
                }
             })
         },
         //打开弹出框
         openModal(){
-            // this.$refs.vueForm.resetForm() //清空表单
         },
 
         closeModal(){
-            this.resetForm()
             this.$emit('update:flagVisible',false)
         }
     },

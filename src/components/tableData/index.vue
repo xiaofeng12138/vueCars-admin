@@ -22,6 +22,13 @@
                          <slot :name = 'item.slotName' :data = 'scope.row'></slot>
                      </template>
                  </el-table-column> 
+                 <!-- switch封装 -->
+                  <el-table-column v-else-if ="item.type == 'switch'" :prop="item.prop"  :label="item.label" align="center">
+                     <template slot-scope="scope">
+                         <el-switch @change="item.hander && item.hander(scope.row)" v-model="scope.row[item.prop]"  :active-value="item.activeValue || true" :inactive-value="item.inactiveValue || false" active-color="#13ce66"  inactive-color="#ff4949"> </el-switch>
+                     </template>
+                 </el-table-column> 
+
                   <el-table-column v-else-if ="item.type == 'image'" :prop="item.prop"  :label="item.label" align="center" :width="item.width">
                      <template slot-scope="scope">
                          <img :src="scope.row[item.prop]" :width = 'item.imgWidth || 50'  alt="">

@@ -4,7 +4,10 @@
             <el-form-item v-for="(item,index) in formItem" :key="index" :label="item.label" :prop="item.prop" :rules="item.rules">
              <!-- input -->
             <el-input  v-if="item.type === 'input'" v-model="formData[item.prop]" :placeholder="item.placeholder" :style="{'width':item.width}" :disabled="item.disabled"></el-input>
-              <!-- select -->
+             <!-- textarea -->
+            <el-input  v-if="item.type === 'Textarea'" :rows="item.row || 5" type="textarea" v-model="formData[item.prop]" :placeholder="item.placeholder" :style="{'width':item.width}" :disabled="item.disabled"></el-input>
+             
+               <!-- select -->
             <el-select  v-if="item.type === 'select'" v-model="formData[item.prop]" :placeholder="item.placeholder" :style="{'width':item.width}">
                <el-option v-for="(tt,index) in item.selectItem" :key="index" :label="tt.label || tt[item.select_label] " :value="tt.value ||tt[item.select_value]"></el-option>
             </el-select>
@@ -63,7 +66,9 @@ export default {
             msg_type:{
                 'input':'请输入',
                 'radio':'请选择',
-                'select':'请选择'
+                'select':'请选择',
+                'disabledRadio':'请选择',
+                'Textarea':'请输入',
             }
         }
     },
@@ -79,12 +84,14 @@ export default {
           }
         },
         initFormData(){
+          console.log(33333)
            this.formItem.forEach((item)=>{
                 if(item.prop){this.formData[item.prop] = item.value || null}
                 this.rules(item)
            })
         },
          rules(item) {
+           console.log(item)
           if (item.required) {
             let normalRules = [{required: true, message: item.requiredMsg || `${this.msg_type[item.type]}${item.label}`, trigger: "change"}];
             if (item.rules && item.rules.length > 0) {
@@ -101,6 +108,7 @@ export default {
       handler(newValve) {
         this.initFormData();
       },
+      immediate:true
     }
   }
 };
