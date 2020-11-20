@@ -36,15 +36,31 @@
                  </el-table-column>
                  <el-table-column v-else-if ="item.type == 'operation'" :prop="item.prop"  :label="item.label" align="center" :width="item.width">
                       <template slot-scope="scope">
-                            <template v-if="item.defaultBtn && item.defaultBtn.editBtn">
+                          <template v-for="(button,index) in item.buttonGroup" >
+                              <el-button v-if="button.event ==='button'"
+                                :key="index"  size="small" 
+                                :type="button.type" 
+                                @click="button.hander && button.hander(scope.row)"
+                                class="mr-10">
+                                {{button.label}}
+                                </el-button>
+                              <router-link  v-else 
+                                :to="{name:button.name,
+                                query:{[ button.key || 'id']:scope.row[button.value || 'id']}}"
+                                class="mr-10">
+                                <el-button :type="button.type" size="small" >{{button.label}}</el-button>
+                                </router-link>
+                          </template>
+                            <!-- <template v-if="item.defaultBtn && item.defaultBtn.editBtn">
                                 <el-button  size="mini" v-if="item.defaultBtn.defaultClick" @click="editFn(scope.row[item.defaultBtn.defaultParams || 'id'],item.defaultBtn.routerLink)">编辑</el-button>
                                 <router-link  v-else :to="{name:item.defaultBtn.routerLink,query:{[item.defaultBtn.defaultParams || 'id']:scope.row.id}}" class="mr-10">
                                        <el-button  size="mini" >编辑</el-button>
                                 </router-link>
-                            </template>
-                         <el-button  size="mini"  type="danger" v-if="item.defaultBtn && item.defaultBtn.deleteBtn" @click="delFn(scope.row.id)">删除</el-button>
+                            </template> -->
+                            <!-- 删除按钮 -->
+                         <el-button  size="small"  type="danger" v-if="item.defaultBtn && item.defaultBtn.deleteBtn" @click="delFn(scope.row[item.defaultBtn.deleteParams || 'id'] )">删除</el-button>
                          <!-- 定义按钮 -->
-                         <slot v-if="item.slotName" :name = 'item.slotName' :data = 'scope.row'></slot>
+                         <!-- <slot v-if="item.slotName" :name = 'item.slotName' :data = 'scope.row'></slot> -->
                       </template>
                  </el-table-column>
                  <el-table-column v-else :prop="item.prop"  :label="item.label" align="center"> </el-table-column>
@@ -160,7 +176,6 @@ export default {
         },
         //数据请求函数
         requestLoadData(params){
-            console.log(params)
             if(params){
                 this.table_config.data = params
                     this.initTableData()
@@ -170,6 +185,7 @@ export default {
         },
         //删除函数
         delFn(row){
+            console.log(row)
            this.$confirm('确认删除吗?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',

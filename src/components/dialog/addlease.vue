@@ -7,7 +7,7 @@
 
 <script>
 import FormData from '@c/form/index'
-import {LeaseAdd} from '@/api/lease.js'
+import {LeaseAdd,LeaseEdit} from '@/api/lease.js'
 export default {
     props:{
       flagVisible:{
@@ -16,7 +16,7 @@ export default {
       },
       data:{
           type:Object,
-          default:()=>({})
+          default:()=>{}
       }
     },
     components:{FormData},
@@ -48,7 +48,7 @@ export default {
         submit(){
               this.$refs.vueForm.$refs.form.validate((valid) => {
                 if (valid) {
-                   this.addFn()
+                   this.form_data.carsLeaseTypeId ? this.editFn():this.addFn()
                 } else {
                     console.log('error submit!!');
                     return false;
@@ -67,11 +67,26 @@ export default {
                }
             })
         },
+         editFn(){
+            LeaseEdit({...this.form_data}).then(res=>{
+               if(res.resCode == 0){
+                   this.$message.success(res.message)
+                   this.showModal = false
+                   this.$refs.vueForm.resetForm() //清空表单
+                   this.$emit('callbackComponents',{
+                       function:'loadData'
+                   })
+               }
+            })
+        },
         //打开弹出框
         openModal(){
         },
 
         closeModal(){
+            this.$refs.vueForm.resetForm()
+            //删除ID属性
+            delete this.form_data.carsLeaseTypeId
             this.$emit('update:flagVisible',false)
         }
     },
@@ -79,12 +94,16 @@ export default {
         flagVisible:{
             handler(newValue,oldvalue){
                this.showModal = newValue
-            },
+            }
         },
         data:{
             handler(newValue){
-                this.form_data.typeValue = newValue.value
-            },
+                let timer = null
+                timer = setTimeout(() => {
+                        this.form_data = newValue
+                        clearTimeout(timer)
+                    }, 10);
+            }
         }
     }
 }

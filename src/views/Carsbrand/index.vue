@@ -155,7 +155,6 @@ export default {
         },
          //编辑
         edit(row){
-            console.log(row)
            this.row_id = row
            this.dialog_show = true
         },

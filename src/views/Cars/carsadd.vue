@@ -55,6 +55,15 @@
             <!-- <template v-slot:clDesc = 'slotData'>
                  <div ref="editorDom" style="text-align:left"></div>
             </template> -->
+            <!-- 租赁类型的插槽 -->
+            <template v-slot:leaseType = 'slotData'>
+              <el-row :gutter="20">
+                  <el-col :span="4" v-for="(item,index) in carsLeaseArray " :key="index">
+                      <div>{{item.carsLeaseTypeName}}</div>
+                      <el-input-number v-model="item.price" controls-position="right" :min="0" :max="10000" style="width:100%"></el-input-number>
+                  </el-col>
+              </el-row>
+            </template>
         </FormData>
     </div>
 </template>
@@ -64,7 +73,8 @@ import carAttrComponents from './components/carsAttrList'
 import Editor from 'wangeditor'
 import FormData from '@c/form/index'
 import {getCarsBrand,getCommonParking} from '@/api/common'
-import {CarsAdd,CarsDetailded,CarsEdit} from '@/api/cars.js'
+import {CarsAdd,CarsDetailded,CarsEdit,CarsLeaseAdd,CarsLeaseDetail,CarsLeaseEdit} from '@/api/cars.js'
+import {getCarLeaseList} from '@/api/lease.js'
 export default {
     components:{FormData,carAttrComponents},
     data() {
@@ -73,7 +83,6 @@ export default {
         energyTypeRadio:this.$store.state.config.energyType,
         editor:null,//富文本对象
         cars_attr:[],
-       
         //表单配置选项
         formConfig:[
             {
@@ -180,6 +189,11 @@ export default {
                 prop:'carsAttr',
             },
             {
+                type:'solt',
+                label:'租赁类型',
+                soltName:'leaseType',
+            },
+            {
                 type:'Wangeditor',
                 label:'车辆描述',
                 prop:'content',
@@ -212,6 +226,7 @@ export default {
             }
         ],
         id:this.$route.query.id,
+        carsLeaseArray:[]
       }
     },
     methods:{
@@ -241,6 +256,7 @@ export default {
         },
         submitForm(formName){
             this.formatCarAttr()
+            this.form_data.leasePrice = this.carsLeaseArray
             this.$refs.vueForm.$refs.form.validate((valid) => {
                 if (valid) {
                    this.id ? this.edit():this.add()
@@ -251,7 +267,7 @@ export default {
                 });
         },
         add(){
-             CarsAdd(this.form_data).then(res=>{
+             CarsLeaseAdd(this.form_data).then(res=>{
                 this.$message.success(res.message)
                 this.$refs.vueForm.resetForm()
                 this.cars_attr = []
@@ -259,7 +275,7 @@ export default {
               })
         },
         edit(){
-             CarsEdit({...this.form_data,id:this.id}).then(res=>{
+             CarsLeaseEdit({...this.form_data,id:this.id}).then(res=>{
                 this.$message.success(res.message)
               })
         },
@@ -282,13 +298,14 @@ export default {
         /**获取车辆详情*/
          getDetail(){
             if(!this.id){return false}
-            CarsDetailded({id:this.id}).then(res=>{
+            CarsLeaseDetail({id:this.id}).then(res=>{
                 const data = res.data
                 for(let key in data){
                     if(Object.keys(this.form_data).includes(key)){
                         this.form_data[key] = data[key]
                     }
                 }
+                this.carsLeaseArray = data.leasePrice
                 /**车辆属性还原*/
                 // if(data.carsAttr){
                 //     let carAttr = JSON.parse(data.carsAttr)
@@ -304,11 +321,20 @@ export default {
                
             })
         },
+        
+        /**获取租赁类型接口*/
+        getCarLeaseFn(){
+            if(this.id){ return false}
+            getCarLeaseList().then(res=>{
+                this.carsLeaseArray = res.data.data
+            })
+        }
     },
     beforeMount(){
         this.getSelectBrand()
         this.getSelectPark()
         this.getDetail()
+        this.getCarLeaseFn()
     },
     mounted(){}
 }

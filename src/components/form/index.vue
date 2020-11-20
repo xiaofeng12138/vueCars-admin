@@ -84,14 +84,12 @@ export default {
           }
         },
         initFormData(){
-          console.log(33333)
            this.formItem.forEach((item)=>{
                 if(item.prop){this.formData[item.prop] = item.value || null}
                 this.rules(item)
            })
         },
          rules(item) {
-           console.log(item)
           if (item.required) {
             let normalRules = [{required: true, message: item.requiredMsg || `${this.msg_type[item.type]}${item.label}`, trigger: "change"}];
             if (item.rules && item.rules.length > 0) {

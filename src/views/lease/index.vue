@@ -1,18 +1,16 @@
 <template>
     <div>
          <tableData  :configTable="tableConfig" ref="loadTable"></tableData>
-
-         <addLease :flagVisible.sync = "dialog_show" :data = "current_data" @callbackComponents = 'callbackComponents' />
+         <addLease :flagVisible.sync = "dialog_show" :data="current_data" @callbackComponents = 'callbackComponents' />
     </div>
 </template>
 <script>
 import { LeaseStatus,getLeaseList } from '@/api/lease.js'
-import Cascader from '@c/cascader/index.vue'
 import tableData from '@c/tableData/index'
 import {address,yearCheckType,energyType} from '@/utils/common.js'
 import addLease from '@c/dialog/addlease.vue'
 export default {
-    components:{addLease,tableData,Cascader},
+    components:{addLease,tableData},
     data() {
         return {
             tableConfig:{
@@ -21,11 +19,27 @@ export default {
                 thead:[
                     {prop:'carsLeaseTypeName',label:'租赁类型'},
                     {prop:'carsLeaseStatus',
-                    label:'禁启用状态',
-                    type:'switch',
-                    hander:(val)=>{this.changeStatus(val)}
+                        label:'禁启用状态',
+                        type:'switch',
+                        hander:(val)=>{this.changeStatus(val)}
                     },
+                    {prop:'carsLeaseDesc',label:'描述'},
                     {prop:'key',label:'车辆列表',width:'800px'},
+                    {
+                        prop:'',
+                        type:'operation',
+                        label:'操作',
+                        defaultBtn:{
+                            deleteBtn:true,
+                            defaultParams:'id',
+                            deleteParams:'carsLeaseTypeId'
+                        },
+                        buttonGroup:[
+                            {label:'编辑',type:'success',event:'button',hander:(val)=>this.editFn(val)},
+                            // {label:'查看',type:'primary',event:'link',name:'CarsbrandIndex',key:'id',value:'carsLeaseTypeId'}
+                        ]
+                        // slotName:'operationBtn'
+                    },
                 ],
                 checkbox:false,
                 url:'leaselist',
@@ -50,12 +64,17 @@ export default {
             },
             keyword:'',
             search_key:'',
-            chooseId:'',
             //存储当前数据
             current_data:{}
         }
     },
     methods:{
+        editFn(data){
+            console.log(data)
+            let copyData = Object.assign({},data)
+            this.current_data = copyData
+            this.dialog_show = true
+        },
         //修改状态函数
         changeStatus(val){
             if(val){
@@ -80,12 +99,6 @@ export default {
         //点击新增函数
         addFn(){
           this.dialog_show = true
-        },
-        //点击选中按钮
-        choose(item){
-            this.chooseId = item.id
-            this.current_data = item
-            this.$refs.loadTable.requestLoadData({typeId:item.id})
         }, 
         //搜索
         search(){

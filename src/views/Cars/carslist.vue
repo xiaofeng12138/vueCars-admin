@@ -121,6 +121,9 @@ export default {
                             defaultClick:false,  //通关点击事件触发跳转
                             defaultParams:'id'
                         },
+                        buttonGroup:[
+                           {label:'编辑',type:'success',event:'link',name:'CarsaddIndex',key:'id',value:'id'}
+                        ]
                         // slotName:'operationBtn'
                     },
                 ],
@@ -135,7 +138,7 @@ export default {
                         { label:'城市', type:'city'},
                         { label:'类型', prop:'type' ,type:'select',width:'120px',options:"parking_type"},
                         { label:'禁启用', prop:'status' , type:'select',width:'120px',options:"brand_status"},
-                        { label:'关键字',type:'keyword',width:'150px'},
+                        { label:'关键字',type:'keyword',width:'150px',options:['parkingName','address']},
                     ],
                 form_hander:[
                         {label:'新增车辆', prop:'add',type:'success',elememt:'link',router:'/carsaddIndex'},

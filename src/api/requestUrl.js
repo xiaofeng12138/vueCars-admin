@@ -5,7 +5,8 @@ const requestUrl = {
     carslist:'/cars/list/',
     carslistDelete:'/cars/delete/',
     carsAttrlist:'/carsAttr/list/',
-    leaselist:'/lease/list/'
+    leaselist:'/lease/list/',
+    leaselistDelete:'/lease/delete/'
     
 }
 
