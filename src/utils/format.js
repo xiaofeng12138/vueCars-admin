@@ -11,3 +11,18 @@ export function getCarAttrKey(params){
     }
     return ''
 }
+
+
+/**
+ * formKey:需要的数据
+ * requestData：请求回来的数据
+ * **/
+export function formatJson(formKey,requestData){
+   const data ={}
+    for(let key in formKey){
+      if(Object.keys(requestData).includes(key)){
+        data[key] = requestData[key]
+      }
+    }
+    return data;
+}

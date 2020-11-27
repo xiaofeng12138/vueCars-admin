@@ -1,6 +1,6 @@
 <template>
     <div>
-     <el-form ref="form"  :model="formData" label-width="120px">
+     <el-form ref="form"  :model="formData" :label-width="LBwidth +'px'">
             <el-form-item v-for="(item,index) in formItem" :key="index" :label="item.label" :prop="item.prop" :rules="item.rules">
              <!-- input -->
             <el-input  v-if="item.type === 'input'" v-model="formData[item.prop]" :placeholder="item.placeholder" :style="{'width':item.width}" :disabled="item.disabled"></el-input>
@@ -22,6 +22,8 @@
                 <el-radio v-for="(item,index) in item.option" :label="item.value" :key="index">{{item.label}}</el-radio>
             </el-radio-group>
 
+            <!-- 计数器封装 -->
+             <el-input-number   v-if="item.type == 'inputNumber'" v-model="formData[item.prop]"  controls-position="right"  :min="item.min || 1" :max="item.max || 1000"></el-input-number>
             <!-- 富文本编辑器 -->
             <template  v-if="item.type == 'Wangeditor'">
                 <Wangeditor  :isClear="wangeditorClear" ref="wangeditor" :value="formData[item.prop]"  :content.sync ="formData[item.prop]" />
@@ -57,6 +59,10 @@ export default {
        formData:{
            type:Object,
            default:()=>{}
+       },
+       LBwidth:{
+           type:Number,
+           default:120
        }
     },
     data(){
@@ -69,6 +75,8 @@ export default {
                 'select':'请选择',
                 'disabledRadio':'请选择',
                 'Textarea':'请输入',
+                'inputNumber':'请输入',
+                'upload':'请上传',
             }
         }
     },

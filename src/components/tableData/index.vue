@@ -17,11 +17,13 @@
                          <span v-html="item.callback && item.callback(scope.row,item.prop)"></span>
                      </template>
                  </el-table-column>
+                  
                  <el-table-column v-else-if ="item.type == 'slot'" :prop="item.prop"  :label="item.label" align="center">
                      <template slot-scope="scope">
                          <slot :name = 'item.slotName' :data = 'scope.row'></slot>
                      </template>
                  </el-table-column> 
+
                  <!-- switch封装 -->
                   <el-table-column v-else-if ="item.type == 'switch'" :prop="item.prop"  :label="item.label" align="center">
                      <template slot-scope="scope">
@@ -38,7 +40,7 @@
                       <template slot-scope="scope">
                           <template v-for="(button,index) in item.buttonGroup" >
                               <el-button v-if="button.event ==='button'"
-                                :key="index"  size="small" 
+                                :key="index"  size="mini" 
                                 :type="button.type" 
                                 @click="button.hander && button.hander(scope.row)"
                                 class="mr-10">
@@ -48,7 +50,7 @@
                                 :to="{name:button.name,
                                 query:{[ button.key || 'id']:scope.row[button.value || 'id']}}"
                                 class="mr-10">
-                                <el-button :type="button.type" size="small" >{{button.label}}</el-button>
+                                <el-button :type="button.type" size="mini" >{{button.label}}</el-button>
                                 </router-link>
                           </template>
                             <!-- <template v-if="item.defaultBtn && item.defaultBtn.editBtn">
@@ -58,9 +60,9 @@
                                 </router-link>
                             </template> -->
                             <!-- 删除按钮 -->
-                         <el-button  size="small"  type="danger" v-if="item.defaultBtn && item.defaultBtn.deleteBtn" @click="delFn(scope.row[item.defaultBtn.deleteParams || 'id'] )">删除</el-button>
+                         <el-button  size="mini"  type="danger" v-if="item.defaultBtn && item.defaultBtn.deleteBtn" @click="delFn(scope.row[item.defaultBtn.deleteParams || 'id'] )">删除</el-button>
                          <!-- 定义按钮 -->
-                         <!-- <slot v-if="item.slotName" :name = 'item.slotName' :data = 'scope.row'></slot> -->
+                         <slot v-if="item.slotName" :name = 'item.slotName' :data = 'scope.row'></slot>
                       </template>
                  </el-table-column>
                  <el-table-column v-else :prop="item.prop"  :label="item.label" align="center"> </el-table-column>

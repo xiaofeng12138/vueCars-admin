@@ -146,6 +146,43 @@ const routes = [
       },
     ],
   },
+  {
+    path: "/member",
+    name: "Member",
+    meta: {
+      title: "会员管理",
+      icon: "console",
+      iconClass: "icon_console"
+    },
+    component: Layout,
+    children: [
+      {
+        path: "/memberIndex",
+        name: "MemberIndex",
+        meta: {
+          title: "会员列表"
+        },
+        component: () => import("../views/Member/index.vue"),
+      },
+      {
+        path: "/memberdetailed",
+        name: "Memberdetailed",
+        hidden: true,
+        meta: {
+          title: "会员详情"
+        },
+        component: () => import("../views/Member/memberdetaild.vue"),
+      },
+      {
+        path: "/memberinfo",
+        name: "Memberinfo",
+        meta: {
+          title: "会员编辑"
+        },
+        component: () => import("../views/Member/memberinfo.vue"),
+      },
+    ],
+  },
 ];
 
 const router = new VueRouter({
