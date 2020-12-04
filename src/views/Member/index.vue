@@ -2,26 +2,31 @@
     <div>
         <!--数据表格部分内容-->
          <tableData  :configTable="tableConfig" ref="loadTable">
-            <template v-slot:operation = 'slotData'>
-                  <el-button type="danger" :disabled="slotData.data.blacklist" size="mini">黑名单</el-button>
-                 
+            <!-- <template v-slot:operation = 'slotData'>
+                  <el-button type="danger" :disabled="slotData.data.blacklist" size="mini">黑名单</el-button> 
+            </template> -->
+            <template v-slot:realName ='slotData'>
+                <img :src="imgSrc" class="imgsrc" @click="showImg(slotData)">
             </template>
          </tableData>
        
-         <AddCarsBrand :flagVisible.sync = "dialog_show" :configId = 'row_id' @tt = 'fn' />
+         <PhoneList :flagVisible.sync = "dialog_show" :title="paramsTitle" :data="photoArray" />
         <!--弹出框部分内容-->
-       
-
     </div>
 </template>
 <script>
 import tableData from '@c/tableData/index'
 import AddCarsBrand from '@/components/dialog/addcarsbrand.vue'
-import { BrandDelete,BrandStatus} from '@/api/brand'
+import { updateRealName,updateBlacklist,CheckPhoto,AmountClear} from '@/api/member'
+import PhoneList from '@c/dialog/phonelist'
 export default {
-    components:{AddCarsBrand,tableData},
+    components:{AddCarsBrand,tableData,PhoneList},
     data() {
     return {
+        dialog_show:false,
+        photoArray:[],
+        paramsTitle:'',
+        imgSrc:require('@/assets/logo.png'),
         tableConfig:{
                 thead:[
                     {
@@ -49,33 +54,37 @@ export default {
                         width:100,
                     },
                     {
+                        prop:'gilding',
+                        label:'押金',
+                    },
+                    {
+                        prop:'amount',
+                        label:'余额',
+                    },
+                    {
                         prop:'illegalAmount',
                         label:'违章预存金',
-                        width:100,
                     },
                     {
                         prop:'check_real_name',
                         label:'实名认证',
-                        type:'function',
-                        callback:(row)=>{
-                            return row.check_real_name ? '已认证':'--'
-                        },
+                        type:'switch',
+                        hander:(status,data,type)=>this.handerRealName(status,data,'identity'),
+                        slotName:'realName'
                     },
                     {
                         prop:'check_cars',
                         label:'驾驶证',
-                        type:'function',
-                        callback:(row)=>{
-                            return row.check_cars ? '已认证':'--'
-                        },
+                        type:'switch',
+                        hander:(status,data,type)=>this.handerRealName(status,data,'drive'),
+                        slotName:'realName'
                     },
                     {
                         prop:'blacklist',
                         label:'黑名单',
                         type:'function',
-                        callback:(row)=>{
-                            return row.blacklist ? '是':'否'
-                        },
+                        type:'switch',
+                        hander:(status,data)=>this.handerUpdateBlacklist(status,data,)
                     },
                      {
                         prop:'',
@@ -90,6 +99,7 @@ export default {
                         buttonGroup:[
                             {label:'编辑',type:'primary',event:'link',name:'Memberinfo',key:'id',value:'memberId'},
                             {label:'详情',type:'primary',event:'link',name:'Memberdetailed',key:'id',value:'memberId'},
+                            {label:'清空',type:'primary',event:'button',hander:(data)=>{this.clearAmount(data)}},
                             // {label:'黑名单',type:'danger',event:'link',name:'Memberdetailed',key:'id',value:'memberId'}
                         ],
                         slotName:'operation'
@@ -122,6 +132,51 @@ export default {
       }
     },
     methods:{
+        //清空
+        clearAmount(data){
+           AmountClear({member_id:data.memberId}).then(res=>{
+               this.$refs.loadTable.initTableData()
+           })
+        },
+        //打开图片弹窗
+        showImg(slotData){
+            this.paramsTitle = slotData.type == 'check_cars' ? '驾驶证':"实名认证"
+            this.dialog_show = true
+            let requestData ={
+                id:slotData.data.memberId,
+                type:slotData.type == 'check_cars' ? 'drive':"identity"
+            }
+            let newArray = []
+            CheckPhoto(requestData).then(res=>{
+                if(res.data){
+                    for(let key in res.data){
+                       newArray.push(res.data[key])
+                    }
+                }
+                this.photoArray = newArray
+            })
+        },
+        //修改实名认证
+        handerRealName(status,data,type){
+            let requsetData ={
+                id:data.memberId,
+                status,
+                type
+            }
+            updateRealName(requsetData).then(res=>{
+                this.$message.success(res.message)
+            })
+        },
+         //黑名单
+        handerUpdateBlacklist(status,data){
+            let requsetData ={
+                id:data.memberId,
+                status,
+            }
+            updateBlacklist(requsetData).then(res=>{
+                this.$message.success(res.message)
+            })
+        },
         fn(){
            this.search()
         },
@@ -141,6 +196,12 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-
+.imgsrc{
+    display: inline-block;
+    vertical-align: middle;
+    width:40px;
+    margin-left: 10px;
+    cursor: pointer;
+}
 </style>
 

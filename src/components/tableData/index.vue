@@ -27,7 +27,8 @@
                  <!-- switch封装 -->
                   <el-table-column v-else-if ="item.type == 'switch'" :prop="item.prop"  :label="item.label" align="center">
                      <template slot-scope="scope">
-                         <el-switch @change="item.hander && item.hander(scope.row)" v-model="scope.row[item.prop]"  :active-value="item.activeValue || true" :inactive-value="item.inactiveValue || false" active-color="#13ce66"  inactive-color="#ff4949"> </el-switch>
+                         <el-switch @change="item.hander && item.hander($event,scope.row)" v-model="scope.row[item.prop]"  :active-value="item.activeValue || true" :inactive-value="item.inactiveValue || false" active-color="#13ce66"  inactive-color="#ff4949"> </el-switch>
+                         <slot :name="item.slotName" :data="scope.row" :type="item.prop"  ></slot>
                      </template>
                  </el-table-column> 
 
@@ -141,7 +142,7 @@ export default {
         search(data){
             let requsetData = data
             requsetData.pageNumber  = 1
-            requsetData.pageSize  = 10
+            requsetData.pageSize  = 100
             this.requestLoadData(requsetData)
         },
         editFn(id,url){
@@ -150,13 +151,16 @@ export default {
                 query:{id}
             })
         },
-        handleCurrentChange(){},
+        handleCurrentChange(page){
+            console.log(page)
+        },
         initTableData(){
             let requsetData ={
                 url:this.table_config.url ,
                 data:this.table_config.data
             }
           tableLoad(requsetData).then(res=>{
+              console.log(res)
               let data = res.data
               if(res.data.data){
                   this.tableLoading = false

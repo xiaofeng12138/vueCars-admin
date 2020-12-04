@@ -8,7 +8,9 @@ const requestUrl = {
     leaselist:'/lease/list/',
     leaselistDelete:'/lease/delete/',
     memberlist:'/member/list/',
-    memberlistDelete:'/member/delete/'
+    memberlistDelete:'/member/delete/',
+    orderlist:'/order/list/',
+    orderlisttDelete:'/order/delete/',
     
 }
 

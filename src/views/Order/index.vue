@@ -1,41 +1,5 @@
 <template>
     <div>
-        <!-- <el-row :gutter="10">
-            <el-col :span="21">
-                <el-form :inline="true" :model="form" class="demo-form-inline">
-                     <el-form-item label="区域">
-                        <Cascader  ref="area" :areaValue.sync = "form.area"/>
-                    </el-form-item>
-                     <el-form-item label="类型" > 
-                        <el-select v-model="form.type" placeholder="停车场" class="w-100">
-                          <el-option  v-for="(item,index) in carsType"  :label="item.label" :value="item.value" :key="item.value"></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="禁启用" >
-                        <el-select v-model="form.status" placeholder="请选择" class="w-100">
-                          <el-option  v-for="(item,index) in carsStatus"  :label="item.label" :value="item.value" :key="item.value"></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="关键字" >
-                        <el-select  v-model="keyword" placeholder="请选择"  class="w-100">
-                            <el-option label="停车场名称" value="parkingName"></el-option>
-                            <el-option label="详细地址" value="address"></el-option>
-                        </el-select>
-                    </el-form-item>
-                     <el-form-item>
-                       <el-input placeholder="请输入关键字" v-model="search_key"></el-input>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button type="danger" @click="search" >查询</el-button>
-                    </el-form-item>
-                </el-form>
-            </el-col>
-        <el-col :span="3" >
-            <div  class="pull-right">
-                <router-link to='/carsaddIndex'> <el-button  type="danger">新增车辆</el-button></router-link>
-                </div>
-        </el-col>
-        </el-row> -->
         
          <tableData  :configTable="tableConfig" ref="loadTable">
              <!-- 禁启用的插槽 -->
@@ -57,7 +21,7 @@
     </div>
 </template>
 <script>
-import { CarsDelete,CarsStatus,CarsLock } from '@/api/cars.js'
+import { orderWait,orderOvertime,orderOver,orderCancel,orderReturn } from '@/api/order.js'
 import Cascader from '@c/cascader/index.vue'
 import ShowMapModal from '@c/dialog/showMapmodal.vue'
 import tableData from '@c/tableData/index'
@@ -68,24 +32,9 @@ export default {
         return {
             tableConfig:{
                 thead:[
-                    {prop:'carsMode',label:'车辆型号'},
-                    {prop:'nameCh',label:'车牌标识'},
                     {
-                        prop:'imgUrl',
-                        type:'image',
-                        label:'车辆LOGO',
-                    }, {
-                        prop:'carsImg',
-                        type:'image',
-                        label:'车辆图片',
-                    },
-                    {
-                        prop:'yearCheck',
-                        label:'年检',
-                        type:'function',
-                        callback:(row,prop)=>{
-                            return yearCheckType(row[prop])
-                        }
+                        prop:'order_no',
+                        label:'订单号'
                     },
                     {
                         prop:'order_status',
@@ -93,38 +42,23 @@ export default {
                         type:'function',
                         width:100,
                         callback:(row)=>{
-                            let order_status = this.$store.state.config.cars_status
-                            let orderKey = order_status [row.carsStatus]
+                            let order_status = this.$store.state.config.order_status
+                            let orderKey = order_status [row.order_status]
                             return orderKey ? orderKey.zh: ''
                         }
                     },
                     {
-                        prop:'energyType',
-                        label:'能源类型',
-                        type:'function',
-                        callback:(row,prop)=>{
-                            return energyType(row[prop])
-                        }
+                        prop:'subscribe_cars_date',
+                        label:'日期',
+                    }, {
+                        prop:'carsLeaseTypeName',
+                        label:'金额',
                     },
-                    {prop:'parkingName',label:'停车场名称'},
-                    {
-                        prop:'status',
-                        type:'slot',
-                        label:'禁启用',
-                        slotName:'status'
-                    },
-                     {prop:'address',label:'区域'},
-                    // {
-                    //     prop:'',
-                    //     label:'操作',
-                    //     type:'slot',
-                    //     slotName:'operate'
-                    // },
                     {
                         prop:'',
                         type:'operation',
                         label:'操作',
-                        width:240,
+                        width:550,
                         defaultBtn:{
                             deleteBtn:true,
                             editBtn:true,
@@ -133,16 +67,19 @@ export default {
                             defaultParams:'id'
                         },
                         buttonGroup:[
-                           {label:'解锁',type:'primary',event:'button',hander:(data)=>this.lockCar(data)},
-                           {label:'编辑',type:'success',event:'link',name:'CarsaddIndex',key:'id',value:'id'}
+                           {label:'待取车',type:'primary',event:'button',hander:(data)=>this.orderWaitFn(data)},
+                           {label:'超时',type:'primary',event:'button',hander:(data)=>this.orderOvertimeFn(data)},
+                           {label:'完成',type:'primary',event:'button',hander:(data)=>this.orderOverFn(data)},
+                           {label:'取消',type:'primary',event:'button',hander:(data)=>this.orderCancelFn(data)},
+                           {label:'待还车',type:'primary',event:'button',hander:(data)=>this.orderReturnFn(data)},
                         ]
                         // slotName:'operationBtn'
                     },
                 ],
                 checkbox:true,
-                url:'carslist',
+                url:'orderlist',
                 data:{
-                    pageSize:10,
+                    pageSize:100,
                     pageNumber:1
                 },
                  //搜索框传参
@@ -180,11 +117,32 @@ export default {
         aaa(){
             alert('333')
         },
-        lockCar(data){
-            CarsLock({id:data.id}).then(res=>{
-                this.$refs.loadTable.initTableData()
-            })
+        orderWaitFn(data){
+          orderWait({order_no:data.order_no,cars_id:data.cars_id}).then(res=>{
+              this.$refs.loadTable.initTableData()
+          })
         },
+        orderOvertimeFn(data){
+            orderOvertime({order_no:data.order_no,cars_id:data.cars_id}).then(res=>{
+              this.$refs.loadTable.initTableData()
+          })
+        },
+        orderOverFn(data){
+            orderOver({order_no:data.order_no,cars_id:data.cars_id}).then(res=>{
+              this.$refs.loadTable.initTableData()
+          })
+        },
+        orderCancelFn(data){
+            orderCancel({order_no:data.order_no,cars_id:data.cars_id}).then(res=>{
+            this.$refs.loadTable.initTableData()
+          })
+        },
+        orderReturnFn(data){
+            orderReturn({order_no:data.order_no,cars_id:data.cars_id}).then(res=>{
+            this.$refs.loadTable.initTableData()
+          })
+        },
+
         //修改车辆品牌禁启用
         changeStatus(row){
             let requestData ={

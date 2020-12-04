@@ -1,14 +1,6 @@
 <template>
     <div>
         <FormData ref="vueForm" :formData="form_data" :formItem ="formConfig" :formBtn = "btnConfig" :LBwidth = "150" >
-           <template v-slot:city = 'slotData'>
-                <Cascader  ref="area" :areaValue.sync = "form_data.area" @callback = "setMapCenter" :mapLocation = "true"/>
-            </template>
-             <template v-slot:map = 'slotData'>
-                <div class="allMap">
-                    <Amap  :options="options_map" @showLonLat ='getLonLatValue' ref="amap" @callback='mapLoad'/>
-                </div>
-            </template>
         </FormData>
        
     </div>
